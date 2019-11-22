@@ -98,8 +98,12 @@ ALTER TABLE `r_role_user`
 RENAME TO  `ems_role_user` ;
 
 -- 添加role_json
-UPDATE `ems_role` SET `AUTHORITY`='{\"add\":true, \"edit\":true, \"delete\":true, \"srap\":true, \"apply\":true, \"assign\":true, \"return\":true, \"import\":true, \"export\":true, \"applayCheck\":true, \"scrapCheck\":true, \"deleteCheck\":true}' WHERE `ROLE_ID`='1';
-UPDATE `ems_role` SET `AUTHORITY`='{\"add\":true,\"edit\":true,\"delete\":true,\"srap\":true,\"apply\":true,\"assign\":true,\"return\":true,\"import\":true,\"export\":true,\"applayCheck\":false,\"scrapCheck\":false,\"deleteCheck\":false}' WHERE `ROLE_ID`='2';
-UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":true,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":false,\"scrapCheck\":false,\"deleteCheck\":false}' WHERE `ROLE_ID`='3';
-UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":false,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":false,\"scrapCheck\":true,\"deleteCheck\":false}' WHERE `ROLE_ID`='4';
-UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":true,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":true,\"scrapCheck\":false,\"deleteCheck\":true}' WHERE `ROLE_ID`='5';
+-- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":true, \"edit\":true, \"delete\":true, \"srap\":true, \"apply\":true, \"assign\":true, \"return\":true, \"import\":true, \"export\":true, \"applayCheck\":true, \"scrapCheck\":true, \"deleteCheck\":true}' WHERE `ROLE_ID`='1';
+-- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":true,\"edit\":true,\"delete\":true,\"srap\":true,\"apply\":true,\"assign\":true,\"return\":true,\"import\":true,\"export\":true,\"applayCheck\":false,\"scrapCheck\":false,\"deleteCheck\":false}' WHERE `ROLE_ID`='2';
+-- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":true,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":false,\"scrapCheck\":false,\"deleteCheck\":false}' WHERE `ROLE_ID`='3';
+-- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":false,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":false,\"scrapCheck\":true,\"deleteCheck\":false}' WHERE `ROLE_ID`='4';
+-- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":true,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":true,\"scrapCheck\":false,\"deleteCheck\":true}' WHERE `ROLE_ID`='5';
+
+-- 添加tpms用户
+ALTER TABLE `itd`.`ems_user`
+  ADD COLUMN `TPMS_USER` VARCHAR(50) CHARACTER SET 'utf8' NULL AFTER `USER_ID`;

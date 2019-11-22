@@ -13,10 +13,11 @@ use think\Db;
 
 class Test extends Controller {
     function test(){
-        $res = Db::table('ems_user')->where('user_id', 'admin')->find();
+//        $res = Db::table('ems_user')->where('user_id', 'admin')->find();
+//
+//        dump($res['USER_NAME']);
 
-        dump($res['USER_NAME']);
-
+        dump(USERNAME);
     }
 
 }

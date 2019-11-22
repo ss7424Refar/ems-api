@@ -2,8 +2,9 @@
 namespace app\v1\controller;
 
 
-class Machine {
-    public function index() {
+class Machine extends Common {
+
+    public function getMachineList() {
 
 
     }

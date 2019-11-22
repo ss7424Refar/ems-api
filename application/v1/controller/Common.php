@@ -13,7 +13,7 @@ use think\Session;
 
 class Common extends Controller {
 
-    //登录用户
+    //登录用户id
     public $loginUserId = '';
 
     public function _initialize(){
