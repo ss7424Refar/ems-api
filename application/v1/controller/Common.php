@@ -13,24 +13,21 @@ use think\Session;
 
 class Common extends Controller {
 
-    //登录用户id
-    public $loginUserId = '';
+    //登录用户
+    public $loginUser = '';
 
     public function _initialize(){
         parent::_initialize();
         $this->checkSession();
     }
 
-    /* @throws
-     * check session
-     */
     protected function checkSession(){
 
-        if (null == Session::get('ems_user')){
+        if (null == Session::get('login_user')){
             return apiResponse(TIMEOUT, 'user session timeout');
         }
 
-        $this->loginUserId = Session::get('ems_user');
+        $this->loginUser = Session::get('login_user');
 
     }
 

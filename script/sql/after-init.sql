@@ -1,7 +1,7 @@
-use itd;
+use tpms;
 SET SQL_SAFE_UPDATES=0;
 
-DROP TABLE `c3p0TestTable`, `c3p0testtable`, `d_approve`, `d_asset_status_record`,
+DROP TABLE `c3p0testtable`, `d_approve`, `d_asset_status_record`,
 `d_attachment`, `d_cabinet`, `d_camera`, `d_comment_log`, `d_const_monitor`,
 `d_display`, `d_error_record`, `d_ip_telephone`, `d_main_engine_bak`, `d_monitor_system`, 
 `d_ovh`, `d_printer`, `d_relay_system`, `d_scanner`, `d_software_asset`, `d_ups`;
@@ -38,10 +38,6 @@ DROP COLUMN `CREATE_DATE`,
 DROP COLUMN `CREATE_USER`,
 DROP COLUMN `IS_DELETED`;
 
--- 需要增加角色对应的权限json
-ALTER TABLE `m_role` 
-CHANGE COLUMN `AUTHORITY` `AUTHORITY` TEXT;
-
 -- m_user
 ALTER TABLE `m_user` 
 DROP COLUMN `IS_IMPORT`,
@@ -72,7 +68,7 @@ DROP COLUMN `CREATE_DATE`,
 DROP COLUMN `CREATE_USER`;
 
 -- 删除已经去除的用户
-delete FROM itd.r_role_user where IS_DELETED = 1;
+delete FROM r_role_user where IS_DELETED = 1;
 
 -- 删除is_deleted列
 ALTER TABLE `r_role_user` 
@@ -96,14 +92,3 @@ RENAME TO  `ems_user` ;
 
 ALTER TABLE `r_role_user` 
 RENAME TO  `ems_role_user` ;
-
--- 添加role_json
--- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":true, \"edit\":true, \"delete\":true, \"srap\":true, \"apply\":true, \"assign\":true, \"return\":true, \"import\":true, \"export\":true, \"applayCheck\":true, \"scrapCheck\":true, \"deleteCheck\":true}' WHERE `ROLE_ID`='1';
--- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":true,\"edit\":true,\"delete\":true,\"srap\":true,\"apply\":true,\"assign\":true,\"return\":true,\"import\":true,\"export\":true,\"applayCheck\":false,\"scrapCheck\":false,\"deleteCheck\":false}' WHERE `ROLE_ID`='2';
--- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":true,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":false,\"scrapCheck\":false,\"deleteCheck\":false}' WHERE `ROLE_ID`='3';
--- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":false,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":false,\"scrapCheck\":true,\"deleteCheck\":false}' WHERE `ROLE_ID`='4';
--- UPDATE `ems_role` SET `AUTHORITY`='{\"add\":false,\"edit\":false,\"delete\":false,\"srap\":false,\"apply\":true,\"assign\":false,\"return\":false,\"import\":false,\"export\":false,\"applayCheck\":true,\"scrapCheck\":false,\"deleteCheck\":true}' WHERE `ROLE_ID`='5';
-
--- 添加tpms用户
-ALTER TABLE `itd`.`ems_user`
-  ADD COLUMN `TPMS_USER` VARCHAR(50) CHARACTER SET 'utf8' NULL AFTER `USER_ID`;

@@ -10,6 +10,7 @@ namespace app\vt\controller;
 
 use think\Controller;
 use think\Db;
+use think\Session;
 
 class Test extends Controller {
     function test(){
@@ -17,7 +18,12 @@ class Test extends Controller {
 //
 //        dump($res['USER_NAME']);
 
-        dump(USERNAME);
+//        dump(json_decode(DEPART, true));
+
+        Session::set('login_user', array('T'=>'A', 'ems'=>'hello'));
+
+        dump(Session::get('login_user')['T']);
+
     }
 
 }
