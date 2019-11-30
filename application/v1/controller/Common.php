@@ -23,11 +23,11 @@ class Common extends Controller {
 
     protected function checkSession(){
 
-        if (null == Session::get('login_user')){
+        if (null == Session::get('loginUser')){
             return apiResponse(TIMEOUT, 'user session timeout');
         }
 
-        $this->loginUser = Session::get('login_user');
+        $this->loginUser = Session::get('loginUser');
 
     }
 

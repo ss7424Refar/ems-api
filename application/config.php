@@ -286,6 +286,10 @@ return [
         // 是否需要进行SQL性能分析
         'sql_explain'     => false
     ],
+    // 配置swiftmailer邮件发送服务器
+    'smtp_host'         => '172.30.52.43',
+    'smtp_port'         => '25',
+    'mail_from'         => 'ems_swv@dbh.dynabook.com',
 
     // +----------------------------------------------------------------------
     // | 自定义变量

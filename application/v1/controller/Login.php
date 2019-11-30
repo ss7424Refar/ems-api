@@ -22,13 +22,12 @@ class Login extends Controller {
      */
     public function check(){
         if (config('session_debug')) {
-            Session::set('login_user',array('T'=>'admin', 'ems'=>'admin', 'T_role_id'=>8));
+            Session::set('loginUser',array('T'=>'admin', 'ems'=>'admin', 'roleId'=>8));
             return apiResponse(SUCCESS, 'access');
         } else {
             if (null == $this->request->server('HTTP_REFERER')) {
                 return apiResponse(TIMEOUT, 'no http referer');
             } else {
-
                 try {
 
                     $userCookie = Cookie::get('TESTLINK_USER_AUTH_COOKIE');
@@ -49,10 +48,10 @@ class Login extends Controller {
                         if (empty($ems_user)) {
                             return apiResponse(ERROR, 'ems invalid');
                         } else {
-                            Session::set('login_user',
+                            Session::set('loginUser',
                                 array('T'=>$t_user['login'],
                                       'ems'=>$ems_user['USER_ID'],
-                                      'T_role_id'=>$t_user['role_id']));
+                                      'roleId'=>$t_user['role_id']));
 
                             Log::record('hello! ['. $ems_user['USER_ID']. ' ] ' . $ems_user['USER_NAME']);
 

@@ -22,3 +22,12 @@ INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_nav_borrow_review');
 INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_nav_scrap_review');
 INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_nav_delete_review');
 
+
+-- 插入admin对应的权限 (8)
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '64');
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '70');
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '71');
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '72');
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '73');
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '74');
+INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '75');

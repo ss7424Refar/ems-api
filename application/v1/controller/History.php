@@ -20,7 +20,6 @@ class History extends Common {
         $fixed_no = $this->request->param('fixed_no');
 
         try {
-            $jsonRes = array();
             $res = Db::table('ems_borrow_history')->where('FIXED_NO', $fixed_no)
                 ->field('user_name, start_date, end_date, predict_date')->order('start_date')
                 ->limit($offset, $limit)->select();
@@ -30,7 +29,7 @@ class History extends Common {
             $jsonResult['total'] = $count;
             $jsonResult['rows'] = $res;
 
-            return apiResponse(SUCCESS, 'get history success', $jsonResult);
+            return apiResponse(SUCCESS, '[History][getHistoryById] success', $jsonResult);
         } catch (Exception $e) {
             Log::record('[History][getHistoryById] error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
