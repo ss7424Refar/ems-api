@@ -16,7 +16,7 @@ class Machine extends Common {
 
         $formData = $this->request->param('formData');
 
-        $map = $this->getSearchCondition($formData);
+        $map = getSearchCondition($formData);
 
         $jsonRes = array();
 
@@ -54,49 +54,4 @@ class Machine extends Common {
         }
     }
 
-    private function getSearchCondition($formData) {
-        $map = array(); // 查询条件
-
-        if ($formData) {
-            $formData = json_decode($formData);
-            if (!empty($formData->fixed)) {
-                $map['fixed_no'] = $formData->fixed;
-            }
-            if (!empty($formData->names)) {
-                $map['MODEL_NAME'] = ['like', '%' . $formData->names . '%'];
-            }
-            if (!empty($formData->serial)) {
-                $map['SERIAL_NO'] = $formData->serial;
-            }
-            if (!empty($formData->type)) {
-                $map['type'] = ['like', '%' . $formData->type . '%'];
-            }
-            if (!empty($formData->user)) {
-                $map['user_name'] = $formData->user;
-            }
-            if (!empty($formData->location)) {
-                $map['location'] = $formData->location;
-            }
-            if (null != $formData->status) {
-                $map['model_status'] = $formData->status;
-            }
-            if (!empty($formData->depart)) {
-                $map['department'] = $formData->depart;
-            }
-            if (!empty($formData->section)) {
-                $map['section_manager'] = $formData->section;
-            }
-            if (!empty($formData->cpu)) {
-                $map['cpu'] = ['like', '%' . $formData->cpu . '%'];
-            }
-            if (!empty($formData->memory)) {
-                $map['cpu'] = ['like', '%' . $formData->memory . '%'];
-            }
-            if (!empty($formData->hardware)) {
-                $map['cpu'] = ['like', '%' . $formData->hardware . '%'];
-            }
-        }
-
-        return $map;
-    }
 }

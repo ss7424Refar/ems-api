@@ -48,9 +48,14 @@ class Test extends Controller {
 
     public function test2() {
 
+
         ini_set('memory_limit','500M');
-        // php 当数据大起来的时候，Db::table的select()会报错..其实是内存不足的原因. 所以暂时导出几个关键的字段.
-        $list = Db::table('ems_main_engine')->select();
+        $list = Db::table('ems_main_engine')->order('fixed_no desc')->select();
         dump($list);
+
+//        ini_set('memory_limit','500M');
+//        // php 当数据大起来的时候，Db::table的select()会报错..其实是内存不足的原因. 所以暂时导出几个关键的字段.
+//        $list = Db::table('ems_main_engine')->select();
+//        dump($list);
     }
 }

@@ -92,3 +92,35 @@ RENAME TO  `ems_user` ;
 
 ALTER TABLE `r_role_user` 
 RENAME TO  `ems_role_user` ;
+
+
+-- 去除回车
+
+ALTER TABLE `tpms`.`ems_main_engine`
+  CHANGE COLUMN `SERIAL_NO` `SERIAL_NO` VARCHAR(50) CHARACTER SET 'utf8' NOT NULL COMMENT '资产序列号' ,
+  CHANGE COLUMN `CPU` `CPU` VARCHAR(200) CHARACTER SET 'utf8' NOT NULL COMMENT 'CPU' ,
+  CHANGE COLUMN `HDD` `HDD` CHAR(20) CHARACTER SET 'utf8' NOT NULL COMMENT '硬盘' ,
+  CHANGE COLUMN `MEMORY` `MEMORY` VARCHAR(20) CHARACTER SET 'utf8' NOT NULL COMMENT '内存' ,
+  CHANGE COLUMN `type` `type` VARCHAR(50) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '型号' ,
+  CHANGE COLUMN `purchase_date` `purchase_date` TIMESTAMP NULL DEFAULT NULL COMMENT '购买日期' ,
+  CHANGE COLUMN `invoice_date` `invoice_date` TIMESTAMP NULL DEFAULT NULL COMMENT '发票日期' ,
+  CHANGE COLUMN `warranty_date` `warranty_date` TIMESTAMP NULL DEFAULT NULL COMMENT '保修日期' ,
+  CHANGE COLUMN `actual_price` `actual_price` DOUBLE NULL DEFAULT NULL COMMENT '实际价格' ,
+  CHANGE COLUMN `tax_inclusive_price` `tax_inclusive_price` DOUBLE NULL DEFAULT NULL COMMENT '含税价格' ,
+  CHANGE COLUMN `screen_size` `screen_size` VARCHAR(20) NULL DEFAULT NULL COMMENT '屏幕尺寸' ,
+  CHANGE COLUMN `mac_address` `mac_address` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT 'Mac地址' ,
+  CHANGE COLUMN `cd_rom` `cd_rom` CHAR(20) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '光驱' ,
+  CHANGE COLUMN `location` `location` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '位置' ,
+  CHANGE COLUMN `department` `department` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '部门' ,
+  CHANGE COLUMN `section_manager` `section_manager` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '课长' ,
+  CHANGE COLUMN `remark` `remark` VARCHAR(200) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '备注' ,
+  CHANGE COLUMN `model_status` `model_status` CHAR(2) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '样机状态' ,
+  CHANGE COLUMN `instore_operator` `instore_operator` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '入库操作者' ,
+  CHANGE COLUMN `instore_date` `instore_date` TIMESTAMP NULL DEFAULT NULL COMMENT '入库时间' ,
+  CHANGE COLUMN `scrap_date` `scrap_date` TIMESTAMP NULL DEFAULT NULL COMMENT '报废时间' ,
+  CHANGE COLUMN `user_id` `user_id` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '使用者' ,
+  CHANGE COLUMN `start_date` `start_date` TIMESTAMP NULL DEFAULT NULL COMMENT '开始使用时间' ,
+  CHANGE COLUMN `predict_date` `predict_date` TIMESTAMP NULL DEFAULT NULL COMMENT '预估归还时间' ,
+  CHANGE COLUMN `end_date` `end_date` TIMESTAMP NULL DEFAULT NULL COMMENT '结束使用时间' ,
+  CHANGE COLUMN `approver_id` `approver_id` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '审批操作者ID' ,
+  CHANGE COLUMN `approve_date` `approve_date` TIMESTAMP NULL DEFAULT NULL COMMENT '审批时间' ;

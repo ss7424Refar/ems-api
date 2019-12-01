@@ -42,3 +42,7 @@ define('MANAGER', 6);
 define('EMS_ADMIN', 14);
 define('EMS_APPROVE', 15);
 define('COMMON_USER', 16);
+
+
+// 导出最大的行数
+define('MAX_LINE', 1000);
