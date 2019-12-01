@@ -96,7 +96,7 @@ RENAME TO  `ems_role_user` ;
 
 -- 去除回车
 
-ALTER TABLE `tpms`.`ems_main_engine`
+ALTER TABLE `ems_main_engine`
   CHANGE COLUMN `SERIAL_NO` `SERIAL_NO` VARCHAR(50) CHARACTER SET 'utf8' NOT NULL COMMENT '资产序列号' ,
   CHANGE COLUMN `CPU` `CPU` VARCHAR(200) CHARACTER SET 'utf8' NOT NULL COMMENT 'CPU' ,
   CHANGE COLUMN `HDD` `HDD` CHAR(20) CHARACTER SET 'utf8' NOT NULL COMMENT '硬盘' ,
@@ -124,3 +124,8 @@ ALTER TABLE `tpms`.`ems_main_engine`
   CHANGE COLUMN `end_date` `end_date` TIMESTAMP NULL DEFAULT NULL COMMENT '结束使用时间' ,
   CHANGE COLUMN `approver_id` `approver_id` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '审批操作者ID' ,
   CHANGE COLUMN `approve_date` `approve_date` TIMESTAMP NULL DEFAULT NULL COMMENT '审批时间' ;
+
+
+ALTER TABLE `tpms`.`ems_main_engine`
+  CHANGE COLUMN `scrap_operator` `scrap_operator` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '报废操作者' ;
+
