@@ -3,14 +3,13 @@ ADD COLUMN `ems_uid` INT(11) NULL DEFAULT NULL AFTER `auth_method`;
 
 
 -- 添加right button desc
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_add');
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_delete');
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_edit');
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_update');
-
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_return');
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_scrap');
-INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_import');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_add');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_delete');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_edit');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_update');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_return');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_scrap');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_import');
 
 
 -- right nav

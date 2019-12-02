@@ -13,9 +13,54 @@ use think\Exception;
 use think\Log;
 
 class Permission extends Common {
-    public function getPermission() {
+    /**
+     * showdoc
+     * @catalog 接口文档/权限相关
+     * @title 主界面的显示隐藏
+     * @description 主界面的显示隐藏接口
+     * @method post
+     * @url http://domain/ems-api/v1/Permission/getItems
+     * @return {"status":0,"msg":"[Permission][getItems] success","data":{"ems_btn_add":true,"ems_btn_delete":true,"ems_btn_edit":true,"ems_btn_import":true,"ems_btn_return":false,"ems_btn_scrap":false,"ems_btn_update":false,"ems_chart":true}}
+     * @return_param status int 状态码1代表失败
+     * @return_param msg string 状态码说明
+     * @remark 返回0， 代表获取数据
+     */
+    public function getItems() {
+        $roleId = $this->loginUser['roleId'];
 
+        try {
+            // 获得所有的button内容
+            $allRights = Db::table('rights')->where('description', 'LIKE', 'ems_btn_%')->select();
 
+            $currentRight = Db::table('role_rights')->alias('a')
+                ->join('rights b', 'a.right_id=b.id')
+                ->where('role_id', $roleId)->where('description', 'LIKE', 'ems_btn_%')->select();
+
+            $in_right = [];
+            foreach ($currentRight as $right) {
+                $in_right[] = $right['description'];
+            }
+
+            $jsonResult = array();
+            foreach ($allRights as $right) {
+                if (in_array($right['description'], $in_right)) {
+                    $jsonResult[$right['description']] = true;
+                } else {
+                    $jsonResult[$right['description']] = false;
+                }
+
+            }
+            // 获取chart的权限
+            if (ADMIN == $roleId || MANAGER == $roleId || EMS_ADMIN == $roleId) {
+                $jsonResult['ems_chart'] = true;
+            } else {
+                $jsonResult['ems_chart'] = false;
+            }
+            return apiResponse(SUCCESS, '[Permission][getItems] success', $jsonResult);
+        } catch (Exception $e) {
+            Log::record('[Permission][getItems] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
     }
 
     public function getNavBarList() {

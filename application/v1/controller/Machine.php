@@ -8,7 +8,19 @@ use ext\MailerUtil;
 
 class Machine extends Common {
     /**
-     * @return \think\response\Json
+     * showdoc
+     * @catalog 接口文档/机器信息相关
+     * @title 获取机器所有信息
+     * @description 获取机器所有信息接口
+     * @method get
+     * @url http://domain/ems-api/v1/Machine/getMachineList
+     * @param limit 必选 int 所需页的大小
+     * @param offset 必选 int (当前页码-1)*pageSize
+     * @param formData 必选 json 表单信息 (let formData = JSON.stringify(this.form))
+     * @return {"status":0,"msg":"[Machine][getMachineList] success","data":{"total":24893,"rows":[{"fixed_no":"1911623","MODEL_NAME":"Altair LE70 CS2.5 2U-3 Certification ","category":null,"SERIAL_NO":"YK302654H","CPU":"i7-8665U","HDD":"1T","MEMORY":"32GB","type":"PT5B3U-AAA27","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"15.6''","mac_address":null,"cd_rom":"","invoice_no":"iEXPn(Des)201911-0011","location":"库位","department":"29","section_manager":"499","remark":"","model_status":"0","instore_operator":null,"instore_date":"2019-11-27 15:46:31","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"iEXPn(Des)201911-0011","supplier":null},{"fixed_no":"1911622","MODEL_NAME":"Altair LE70 CS2.5 2U-3 Certification ","category":null,"SERIAL_NO":"YK302653H","CPU":"i7-8665U","HDD":"1T","MEMORY":"32GB","type":"PT5B3U-AAA27","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"15.6''","mac_address":null,"cd_rom":"","invoice_no":"iEXPn(Des)201911-0011","location":"库位","department":"29","section_manager":"499","remark":"","model_status":"0","instore_operator":null,"instore_date":"2019-11-27 15:46:31","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"iEXPn(Des)201911-0011","supplier":null}]}}
+     * @return_param status int 状态码
+     * @return_param total int 总页数
+     * @remark 需要将formData以json形式传递, {formData:{}}
      */
     public function getMachineList() {
         $pageSize = $this->request->param('limit');
@@ -38,8 +50,14 @@ class Machine extends Common {
     }
 
     /**
-     * 根据fixed_no返回样机具体信息, 如果查询没数据则为null
-     * @return \think\response\Json
+     * showdoc
+     * @catalog 接口文档/机器信息相关
+     * @title 根据id获取单个机器的信息
+     * @description 单个机器机器信息相关接口
+     * @method post
+     * @url http://domain/ems-api/v1/Machine/getMachineById
+     * @param fixed_no 必选 int 样机编号
+     * @return {"status":0,"msg":"[Machine][getMachineById] success","data":{"fixed_no":"0602027","MODEL_NAME":"Cleveland10E CS2","category":null,"SERIAL_NO":"2147483647","CPU":"Intel","HDD":"250G","MEMORY":"2GB","type":"75013482JU","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"14.1","mac_address":"","cd_rom":"DVD-BD","invoice_no":"","location":"","department":"37","section_manager":"491","remark":"李甜","model_status":"3","instore_operator":null,"instore_date":"2013-06-21 07:59:33","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"","supplier":null}}
      */
     public function getMachineById() {
         $fixed_no = $this->request->param('fixed_no');

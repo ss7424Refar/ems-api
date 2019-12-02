@@ -29,7 +29,6 @@ function apiResponse($status = 0, $msg = null, $data = []) {
 
 }
 
-// 格式化查询machine条件
 function getSearchCondition($formData) {
     $map = array(); // 查询条件
 

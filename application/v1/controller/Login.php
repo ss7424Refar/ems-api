@@ -17,8 +17,16 @@ use think\Log;
 
 class Login extends Controller {
     /**
-     * 判断点击链接后能够进入ems入口
-     * @return \think\response\Json
+     * showdoc
+     * @catalog 接口文档/登录入口
+     * @title 登录入口
+     * @description 登录ems系统的入口check接口
+     * @method post
+     * @url http://domain/ems-api/v1/login/check
+     * @return {"status":0,"msg":"access","data":[]}
+     * @return_param status int 状态码
+     * @return_param msg string 状态码说明
+     * @remark 需要点击链接的时候发送请求，或返回1/2， 则不能进入系统
      */
     public function check(){
         if (config('session_debug')) {

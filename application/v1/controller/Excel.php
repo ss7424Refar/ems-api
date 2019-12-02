@@ -14,12 +14,22 @@ use think\Log;
 
 class Excel extends Common{
     /**
-     * 别问， 问就是尽力导成了csv
-     * @return \think\response\Json
+     * showdoc
+     * @catalog 接口文档/EXCEL相关
+     * @title EXCEL导出接口
+     * @description EXCEL导出接口
+     * @method get
+     * @param formData 必选 json {formData: {}}
+     * @return 无
+     * @url http://domain/ems-api/v1/Excel/export
+     * @remark 别问， 问就是尽力导成了csv 例子： let formData = JSON.stringify(this.form)； window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?' + 'formData=' + formData
      */
     public function export() {
         set_time_limit(0);
         ini_set('memory_limit', '500M');
+
+        $formData = $this->request->param('formData');
+        $map = getSearchCondition($formData);
 
         try {
             $columns = Db::table('information_schema.columns')
@@ -49,7 +59,7 @@ class Excel extends Common{
             fputcsv($fp, $column);
 
             // 获取表数目
-            $count = Db::table('ems_main_engine')->order('fixed_no desc')->count();
+            $count = Db::table('ems_main_engine')->where($map)->count();
 
             // 判断pages数目
             $pages = ceil($count / MAX_LINE);
@@ -60,7 +70,7 @@ class Excel extends Common{
             $sectionArray = json_decode(SECTION, true);
 
             for($i = 1; $i <= $pages; $i++) {
-                $list = Db::table('ems_main_engine')->order('fixed_no desc')
+                $list = Db::table('ems_main_engine')->where($map)->order('fixed_no desc')
                     ->limit(($i - 1) * MAX_LINE, MAX_LINE)->select();
 
                 foreach ($list as $row) {
