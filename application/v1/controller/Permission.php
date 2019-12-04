@@ -26,9 +26,9 @@ class Permission extends Common {
      * @remark 返回0， 代表获取数据
      */
     public function getItems() {
-        $roleId = $this->loginUser['roleId'];
 
         try {
+            $roleId = $this->loginUser['roleId'];
             // 获得所有的button内容
             $allRights = Db::table('rights')->where('description', 'LIKE', 'ems_btn_%')->select();
 

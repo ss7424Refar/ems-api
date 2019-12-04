@@ -10,6 +10,8 @@ namespace app\v1\controller;
 
 use think\Controller;
 use think\Session;
+use think\Response;
+use think\exception\HttpResponseException;
 
 class Common extends Controller {
 
@@ -21,10 +23,18 @@ class Common extends Controller {
         $this->checkSession();
     }
 
-    protected function checkSession(){
-
+    public function checkSession(){
         if (null == Session::get('loginUser')){
-            return apiResponse(TIMEOUT, 'user session timeout');
+            $type = $this->getResponseType(); // 获取当前的 response 输出类型
+            $result = [
+                'status' => TIMEOUT,
+                'msg'  => 'user session timeout',
+                'data' => []
+            ];
+
+            $response = Response::create($result, $type)->header(getHttpHeader());
+
+            throw new HttpResponseException($response); // 构造方法可以用throw
         }
 
         $this->loginUser = Session::get('loginUser');

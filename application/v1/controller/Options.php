@@ -19,7 +19,7 @@ class Options extends Common {
      * @return {"status":0,"msg":"[Options][getDepartment] success","data":[{"value":null,"text":"请选择"},{"value":29,"text":"DT部"},{"value":33,"text":"VT部"},{"value":37,"text":"SWT部"}]}
      * @return_param status int 状态码
      * @return_param msg string 状态码说明
-     * @remark 返回0， 代表获取数据
+     * @remark 返回0, 代表获取数据
      */
     public function getDepartment() {
         $depart = json_decode(DEPART, true);
@@ -36,7 +36,7 @@ class Options extends Common {
      * @return {"status":0,"msg":"[Options][getSection] success","data":[{"value":null,"text":"请选择"},{"value":1884,"text":"SCD"},{"value":2271,"text":"SWV"},{"value":2272,"text":"PSD"},{"value":2273,"text":"CUD"},{"value":2274,"text":"FWD"},{"value":442,"text":"SYD"},{"value":462,"text":"HWD"},{"value":485,"text":"MED"},{"value":491,"text":"CSV"},{"value":499,"text":"HWV"},{"value":520,"text":"PAV"},{"value":540,"text":"SSD"}]}
      * @return_param status int 状态码
      * @return_param msg string 状态码说明
-     * @remark 返回0， 代表获取数据
+     * @remark 返回0, 代表获取数据
      */
     public function getSection() {
         $section = json_decode(SECTION, true);
@@ -69,7 +69,6 @@ class Options extends Common {
             $tmp['text'] = $value;
             array_push($jsonResult, $tmp);
         }
-        array_unshift($jsonResult, array('value'=>null, 'text'=>'请选择'));
         return $jsonResult;
     }
 }

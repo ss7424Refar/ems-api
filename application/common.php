@@ -11,13 +11,21 @@
 
 // 应用公共文件
 
+use think\Request;
+
+function getHttpHeader() {
+    // 解决跨域通配符*与include报错
+    $origin = Request::instance()->server('HTTP_ORIGIN');
+    $header['Access-Control-Allow-Origin'] = $origin;
+    $header['Access-Control-Allow-Methods'] = '*';
+    $header['Access-Control-Allow-Headers'] = 'x-requested-with,content-type,multipart/form-data';
+    // 携带cookie验证
+    $header['Access-Control-Allow-Credentials'] = true;
+
+    return $header;
+}
+
 function apiResponse($status = 0, $msg = null, $data = []) {
-    // 跨域
-    header('Access-Control-Allow-Origin:*');
-    // 响应类型
-    header('Access-Control-Allow-Methods:*');
-    // 响应头设置
-    header('Access-Control-Allow-Headers:x-requested-with,content-type,multipart/form-data');
     // data
     $data = [
         'status'=>$status,
@@ -25,8 +33,7 @@ function apiResponse($status = 0, $msg = null, $data = []) {
         'data'=>$data,
     ];
 
-    return json($data);
-
+    return json($data, 200, getHttpHeader());
 }
 
 function getSearchCondition($formData) {

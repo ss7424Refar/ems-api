@@ -30,7 +30,7 @@ class Login extends Controller {
      */
     public function check(){
         if (config('session_debug')) {
-            Session::set('loginUser',array('T'=>'admin', 'ems'=>'admin', 'roleId'=>8));
+            Session::set('loginUser', array('T'=>'admin', 'ems'=>'admin', 'roleId'=>8));
             return apiResponse(SUCCESS, 'access');
         } else {
             if (null == $this->request->server('HTTP_REFERER')) {
