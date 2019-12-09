@@ -22,7 +22,7 @@ define('SECTION', json_encode(array('1884'=>'SCD', '2271'=>'SWV', '2272'=>'PSD',
                                    '491'=>'CSV', '499'=>'HWV', '520'=>'PAV','540'=>'SSD')));
 
 define('STATUS', json_encode(array('在库', '待借出审批', '待分配', '使用中', '待报废审批', '已报废',
-                                        '待删除审批', '待删除', '待报废')));
+                                        '待删除审批')));
 define('DEPART', json_encode(array('29'=>'DT部', '33'=>'VT部', '37'=>'SWT部')));
 
 // 更新字段时为了看懂用到状态
@@ -33,8 +33,6 @@ define('USING', 3);
 define('SCRAP_REVIEW', 4);
 define('SCRAPED', 5);
 define('DELETE_REVIEW', 6);
-define('DELETING', 7);
-define('SCRAPING', 8);
 
 // 定义权限的roleId
 define('ADMIN', 8);
@@ -43,6 +41,3 @@ define('EMS_ADMIN', 14);
 define('EMS_APPROVE', 15);
 define('COMMON_USER', 16);
 
-
-// 导出最大的行数
-define('MAX_LINE', 1000);

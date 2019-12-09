@@ -23,6 +23,7 @@ class Machine extends Common {
      * @remark 需要将formData以json形式传递, {formData:{}}
      */
     public function getMachineList() {
+
         $pageSize = $this->request->param('limit');
         $offset = $this->request->param('offset');
 
@@ -33,13 +34,38 @@ class Machine extends Common {
         $jsonRes = array();
 
         try {
-            $res = Db::table('ems_main_engine')->where($map)->order('instore_date desc')
+            $res = null;
+
+            // 如果没填历史使用者
+            if (empty($map['historyUser'])) {
+                $res = Db::table('ems_main_engine')->where($map)->order('instore_date desc')
                         ->limit($offset, $pageSize)->select();
 
-            $total = Db::table('ems_main_engine')->where($map)->count();
+                $total = Db::table('ems_main_engine')->where($map)->count();
 
-            $jsonRes['total'] = $total;
-            $jsonRes['rows'] = $res;
+                $jsonRes['total'] = $total;
+                $jsonRes['rows'] = $res;
+
+            } else {
+                // 先查询ems_borrow_history
+                $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
+                            ->where('user_name', $map['historyUser'])->buildSql();
+
+                // 移除数组
+                unset($map['historyUser']);
+                $sqlB = Db::table('ems_main_engine')->where($map)->buildSql();
+
+                // 查询
+                $res = Db::table($sqlA . ' a')
+                        ->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')
+                        ->order('instore_date desc')
+                        ->limit($offset, $pageSize)->select();
+
+                $total = Db::table($sqlA . ' a')->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')->count();
+
+                $jsonRes['total'] = $total;
+                $jsonRes['rows'] = $res;
+            }
 
             return apiResponse(SUCCESS, '[Machine][getMachineList] success', $jsonRes);
         } catch (Exception $e) {

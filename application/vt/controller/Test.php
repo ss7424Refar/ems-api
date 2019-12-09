@@ -49,13 +49,47 @@ class Test extends Controller {
     public function test2() {
 
 
-        ini_set('memory_limit','500M');
-        $list = Db::table('ems_main_engine')->order('fixed_no desc')->select();
-        dump($list);
-
 //        ini_set('memory_limit','500M');
-//        // php 当数据大起来的时候，Db::table的select()会报错..其实是内存不足的原因. 所以暂时导出几个关键的字段.
-//        $list = Db::table('ems_main_engine')->select();
-//        dump($list);
+//        $list = Db::table('ems_main_engine')->order('fixed_no desc')->select();
+//
+//        $statusArray = json_decode(STATUS, true);
+//        $departArray = json_decode(DEPART, true);
+//        $sectionArray = json_decode(SECTION, true);
+//
+//        foreach ($list as $row) {
+//            $item = [];
+//            foreach ($row as $key => $value) {
+//                // 其中有个字段是为null的, 所以数组会存在越界
+//                if ('model_status' == $key) {
+//                    if (null != $value) {
+//                        $value = $statusArray[$value];
+//                    }
+//                }
+//                if ('department' == $key) {
+//                    if (null != $value) {
+//                        $value = $departArray[$value];
+//                    }
+//                }
+//                if ('section_manager' == $key) {
+//                    if (null != $value) {
+//                        $value = $sectionArray[$value];
+//                    }
+//                }
+//                $item[] = $value;
+////                $item[] = mb_convert_encoding($value,'GBK','UTF-8');
+//            }
+//
+//            dump($item);
+//            break;
+//        }
+
+
+//        $data=array ("hello"=>1,"hell2o"=>122,"hello3"=>133);
+//
+//        unset($data['hello']);
+//
+//        dump($data);
+
+        dump(config('database.database'));
     }
 }

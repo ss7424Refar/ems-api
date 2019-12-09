@@ -20,7 +20,7 @@ function getHttpHeader() {
     $header['Access-Control-Allow-Methods'] = '*';
     $header['Access-Control-Allow-Headers'] = 'x-requested-with,content-type,multipart/form-data';
     // 携带cookie验证
-    $header['Access-Control-Allow-Credentials'] = true;
+    $header['Access-Control-Allow-Credentials'] = 'true'; // 一定要是字符串
 
     return $header;
 }
@@ -47,14 +47,14 @@ function getSearchCondition($formData) {
         if (!empty($formData->names)) {
             $map['MODEL_NAME'] = ['like', '%' . $formData->names . '%'];
         }
-        if (!empty($formData->serial)) {
-            $map['SERIAL_NO'] = $formData->serial;
-        }
         if (!empty($formData->type)) {
             $map['type'] = ['like', '%' . $formData->type . '%'];
         }
         if (!empty($formData->user)) {
             $map['user_name'] = $formData->user;
+        }
+        if (!empty($formData->history_user)) {
+            $map['historyUser'] = ['like', '%' . $formData->history_user . '%'];
         }
         if (!empty($formData->location)) {
             $map['location'] = $formData->location;
@@ -72,10 +72,10 @@ function getSearchCondition($formData) {
             $map['cpu'] = ['like', '%' . $formData->cpu . '%'];
         }
         if (!empty($formData->memory)) {
-            $map['cpu'] = ['like', '%' . $formData->memory . '%'];
+            $map['MEMORY'] = ['like', '%' . $formData->memory . '%'];
         }
         if (!empty($formData->hardware)) {
-            $map['cpu'] = ['like', '%' . $formData->hardware . '%'];
+            $map['HDD'] = ['like', '%' . $formData->hardware . '%'];
         }
     }
 
