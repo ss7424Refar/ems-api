@@ -13,6 +13,11 @@ use think\Db;
 use think\Session;
 
 class Test extends Controller {
+
+
+    static $working = 1;
+    const work = 1;
+
     function test(){
 //        $res = Db::table('ems_user')->where('user_id', 'admin')->find();
 //
@@ -90,6 +95,20 @@ class Test extends Controller {
 //
 //        dump($data);
 
-        dump(config('database.database'));
+//        dump(config('database.database'));
+
+//        dump(self::work);
+//        dump(self::$working);
+
+//        $usr = Db::table('ems_user')->where('USER_ID', '500323')
+//            ->where('IS_DELETED', 0)->find();
+//        dump($usr);
+        $s = 1;
+
+        if (0 != $s) {
+            echo 1;
+        }
+
+
     }
 }

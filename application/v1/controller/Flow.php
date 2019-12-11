@@ -19,9 +19,10 @@ class Flow extends Common {
      * @return \think\response\Json
      */
     public function apply() {
-        $userId = $this->loginUser['ems'];
 
         try {
+            $userId = $this->loginUser['ems'];
+
             $userInfo = Db::table('ems_user')->where('USER_ID', $userId)->where('IS_DELETED', 0)
                 ->field('user_name, mail')->find();
 
@@ -29,18 +30,19 @@ class Flow extends Common {
             $user = $userInfo['user_name'];
             $from = $userInfo['mail'];
 
-            $fixed_nos = json_decode($this->request->param('fixed_nos')); // 转为数组
+            // 前端需要把数组变成字符串
+            $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
 
-            // 要发送邮件的课
-            $sectionArray = array();
+            // 需要插入的数据
+            $inputData = array();
 
             for ($i = 0; $i < count($fixed_nos); $i++) {
 
-                $query = Db::table('d_main_engine')->where('fixed_no', $fixed_nos[$i])
-                    ->where('model_status', IN_STORE)->where('user_id', null)->select();
+                $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                    ->where('model_status', IN_STORE)->where('user_id', null)->find();
                 if (!empty($query)) {
                     // 更新状态
-                    $res = Db::table('d_main_engine')->where('fixed_no', $fixed_nos[$i])
+                    $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                         ->where('model_status', IN_STORE)->where('user_id', null)
                         ->update([
                             'user_name'    => $user,
@@ -49,10 +51,17 @@ class Flow extends Common {
                             'start_date' => Db::raw('now()')
                         ]);
 
-                    // 取得课
-                    if (0 != $res) {
-                        if (!in_array($query[0]['section_manager'], $sectionArray)) {
-                            array_push($sectionArray, $query[0]['section_manager']);
+                    // 更新成功
+                    if (1 == $res) {
+                        $section = $query['section_manager'];
+                        $tmp['id'] = $query['fixed_no'];
+                        $tmp['name'] = $query['MODEL_NAME'];
+                        $tmp['desc'] = $query['remark'];
+
+                        if (array_key_exists($section, $inputData)) {
+                            $inputData[$section][] = $tmp;
+                        } else {
+                            $inputData[$section][] = $tmp;
                         }
                     } else {
                         Log::record('[Machine][apply] update fail ' . $fixed_nos[$i]);
@@ -61,10 +70,17 @@ class Flow extends Common {
                 }
             }
 
-            // 发送邮件
-            if (!empty($sectionArray)) {
-                $this->sendSectionApproveMail($sectionArray, $user, $from);
+            // 存入邮件队列表中
+            if (!empty($inputData)) {
+                foreach ($inputData as $key => $value) {
+                    // 插入数据
+                    $data = ['insert_date'=>Db::raw('now()'), 'main_body'=>'', 'from'=>$from, 'to'=>'',
+                             'table_data' => json_encode($value)];
+                    Db::table('ems_mail_queue')->insert($data);
+                }
+
             }
+
         } catch (Exception $e) {
             Log::record('[Machine][apply] error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
@@ -72,6 +88,13 @@ class Flow extends Common {
         }
         return apiResponse(ERROR, 'server error');
     }
+
+    private function getSectionAddress($section) {
+
+
+    }
+
+
 
     private function sendSectionApproveMail($sectionArray, $user, $from) {
         for ($i = 0; $i < count($sectionArray); $i++) {

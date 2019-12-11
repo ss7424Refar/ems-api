@@ -82,3 +82,49 @@ function getSearchCondition($formData) {
     return $map;
 
 }
+
+function getFormArray($formData) {
+    $data = array(); // 查询条件
+
+    if ($formData) {
+        $formData = json_decode($formData);
+        if (!empty($formData->fixed)) {
+            $data['fixed_no'] = $formData->fixed;
+        }
+        if (!empty($formData->names)) {
+            $data['MODEL_NAME'] = ['like', '%' . $formData->names . '%'];
+        }
+        if (!empty($formData->type)) {
+            $data['type'] = ['like', '%' . $formData->type . '%'];
+        }
+        if (!empty($formData->user)) {
+            $data['user_name'] = $formData->user;
+        }
+        if (!empty($formData->history_user)) {
+            $data['historyUser'] = ['like', '%' . $formData->history_user . '%'];
+        }
+        if (!empty($formData->location)) {
+            $data['location'] = $formData->location;
+        }
+        if (null != $formData->status) {
+            $data['model_status'] = $formData->status;
+        }
+        if (!empty($formData->depart)) {
+            $data['department'] = $formData->depart;
+        }
+        if (!empty($formData->section)) {
+            $data['section_manager'] = $formData->section;
+        }
+        if (!empty($formData->cpu)) {
+            $data['cpu'] = ['like', '%' . $formData->cpu . '%'];
+        }
+        if (!empty($formData->memory)) {
+            $data['MEMORY'] = ['like', '%' . $formData->memory . '%'];
+        }
+        if (!empty($formData->hardware)) {
+            $data['HDD'] = ['like', '%' . $formData->hardware . '%'];
+        }
+    }
+
+    return $data;
+}

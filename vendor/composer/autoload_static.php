@@ -71,12 +71,17 @@ class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
+            'think\\worker\\' => 13,
             'think\\composer\\' => 15,
             'think\\' => 6,
         ),
         'a' => 
         array (
             'app\\' => 4,
+        ),
+        'W' => 
+        array (
+            'Workerman\\' => 10,
         ),
         'P' => 
         array (
@@ -94,6 +99,10 @@ class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
     );
 
     public static $prefixDirsPsr4 = array (
+        'think\\worker\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/topthink/think-worker/src',
+        ),
         'think\\composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-installer/src',
@@ -105,6 +114,10 @@ class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application',
+        ),
+        'Workerman\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Psr\\SimpleCache\\' => 
         array (

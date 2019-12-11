@@ -16,7 +16,7 @@ use think\exception\HttpResponseException;
 class Common extends Controller {
 
     //登录用户
-    public $loginUser = '';
+    public $loginUser = array();
 
     public function _initialize(){
         parent::_initialize();

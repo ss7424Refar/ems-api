@@ -19,7 +19,7 @@ return [
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态
-    'app_status'             => '',
+    'app_status'             => 'config_home',
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
@@ -248,13 +248,13 @@ return [
         // 数据库类型
         'type'        => 'mysql',
         // 服务器地址
-        'hostname'    => '127.0.0.1',
+        'hostname'    => '172.30.52.29',
         // 数据库名
         'database'    => 'tpms',
         // 数据库用户名
         'username'    => 'root',
         // 数据库密码
-        'password'    => '123456',
+        'password'    => 'root',
         // 端口
         'hostport'        => '',
         // 连接dsn
@@ -290,11 +290,12 @@ return [
     'smtp_host'         => '172.30.52.43',
     'smtp_port'         => '25',
     'mail_from'         => 'ems_swv@dbh.dynabook.com',
+    'mail_cc'           => '["lin.zhu@dbh.dynabook.com", "bin.yan@dbh.dynabook.com"]',
 
     // +----------------------------------------------------------------------
     // | 自定义变量
     // +----------------------------------------------------------------------
 
     // 是否开启session
-    'session_debug'       => true,
+    'session_debug'       => false,
 ];

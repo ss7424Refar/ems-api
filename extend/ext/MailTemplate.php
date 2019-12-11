@@ -10,7 +10,7 @@ namespace ext;
 
 class MailTemplate {
 
-    public static $subjectBorrowApprove = 'Workflow:现有样机需借出审批(';
+    public static $subjectBorrowApprove = '[样机借出审批]';
     public static $subjectReturn = 'Workflow:现有样机归还(';
     public static $subjectUsing = 'Workflow:现有样机使用确认(';
     public static $subjectDeleteApprove = 'Workflow:现有样机删除审批(';

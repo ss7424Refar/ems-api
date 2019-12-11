@@ -10,6 +10,7 @@ INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_update');
 INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_return');
 INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_scrap');
 INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_import');
+INSERT INTO `tpms`.`rights` (`description`) VALUES ('ems_btn_assign');
 
 
 -- right nav
@@ -30,3 +31,13 @@ INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '72');
 INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '73');
 INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '74');
 INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '75');
+
+
+-- 增加ems_mail_queue
+CREATE TABLE `tpms`.`ems_mail_queue` (
+  `insert_date` DATETIME NOT NULL,
+  `main_body` TEXT NULL,
+  `subject` TEXT NULL,
+  `from` TEXT NULL,
+  `to` TEXT NULL,
+  `table_data` TEXT NULL);
