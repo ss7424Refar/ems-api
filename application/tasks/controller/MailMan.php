@@ -8,76 +8,66 @@
 
 namespace app\tasks\controller;
 
+use ext\MailTemplate;
+use think\Db;
+use think\Exception;
+use think\Loader;
 use think\Log;
+Loader::import('lib.swift_required');
+use Swift_SmtpTransport;
+use Swift_Mailer;
+use Swift_Message;
 
 class MailMan {
 
-    private $path;
-
-    public function __construct(){
-
-        $this->path = EXTEND_PATH. 'sync_flag.txt';
-        $this->createFile();
-    }
-
     public function dog() {
 
-        $path = config('ats_bios_temp_update');
+        try {
+            Log::record('[MailMan] start');
 
-        $handler = opendir($path);
+            $res = Db::table('ems_mail_queue')->where('to', '<>', '[]')
+                ->order('id')->select();
 
-        while (($filename = readdir($handler)) !== false) {
-            //略过linux目录的名字为'.'和‘..'的文件
-            if ($filename != "." && $filename != "..") {
+            foreach ($res as $key => $item) {
+                $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
 
-                $p = $path.DIRECTORY_SEPARATOR.$filename;
+                $r = self::send($item['from'], json_decode($item['to'], true), config('mail_cc'),
+                    $item['subject'], $content);
 
-                // 是目录的情况
-                if (is_dir($p)) {
-                    // 判断flag
-                    $status = file_get_contents($this->path);
-                    if ('not upload' == $status) {
-                        Log::record('[syncFile dog] starting sync '. $filename);
-                        // 设置成uploading
-                        file_put_contents($this->path, 'uploading');
-                        // 同步
-                        // - p 复制源文件内容后，还将把其修改时间和访问权限也复制到新文件中。
-                        $cmd = 'cp -rfp ' . $p. ' ' . config('ats_bios_update') .' 2>&1';
-                        exec($cmd, $out, $return_val);
+                if ($r > 0) {
+                    Log::record('[MailMan][dog] success ' .$item['id']);
 
-                        if (0 != $return_val) {
-                            Log::record('[syncFile dog] sync fail => '. $cmd. ' [Info] '. json_encode($out));
+                    // 删除该条记录
+                    Db::table('ems_mail_queue')->where('id', $item['id'])->delete();
 
-                        } else {
-                            Log::record('[syncFile dog] sync success => '. $cmd. ' [Info] '. json_encode($out));
-                            // 删除目录
-                            $cmd = 'rm -rf ' . $p .' 2>&1';
-                            exec($cmd, $out, $return_val);
-
-                            if (0 != $return_val) {
-                                Log::record('[syncFile dog] rm fail => '. $cmd. ' [Info] '. json_encode($out));
-                            } else {
-                                Log::record('[syncFile dog] rm success => '. $cmd. ' [Info] '. json_encode($out));
-                            }
-                        }
-
-                        file_put_contents($this->path, 'not upload');
-                    }
-
+                } else {
+                    Log::record('[MailMan][dog] fail ' .$item['id']);
                 }
+
             }
+        } catch (Exception $e) {
+            Log::record('[MailMan][dog] error' . $e->getMessage());
         }
+
+        Log::record('[MailMan] end');
     }
 
-    public function createFile() {
-        // 文件不存在则尝试创建之。可读又可以写
-        if(!file_exists($this->path)) {
-            $file = fopen($this->path, 'w+');
+    // 发送邮件function
+    private static function send($from, $to, $cc, $mailTitle, $content) {
 
-            fwrite($file, 'not upload');
-            fclose($file);
+        $transport = Swift_SmtpTransport::newInstance(config('smtp_host'), config('smtp_port'));
 
-            chmod($this->path, 0777);
-        }
+        $mailer = Swift_Mailer::newInstance($transport);
+
+        // Create a message
+        $message = Swift_Message::newInstance($mailTitle)
+            ->setFrom(array($from))
+            ->setTo($to)
+            ->setCc(json_decode($cc, true))
+            ->setBody($content, 'text/html', 'utf-8');
+
+        // Send the message
+        $result = $mailer->send($message);
+        return $result;
     }
 }

@@ -63,7 +63,7 @@ class Worker extends Server
         if($worker->id === 0) {
             Timer::add(2, function()use($worker){
                 Log::record('[Worker][id][1][SendMail]');
-                $watcher = controller('push/WatchExpired');
+                $watcher = controller('tasks/MailMan');
                 $watcher->dog();
             });
         }

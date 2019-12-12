@@ -35,7 +35,7 @@ INSERT INTO `tpms`.`role_rights` (`role_id`, `right_id`) VALUES ('8', '75');
 
 -- 增加ems_mail_queue
 CREATE TABLE `tpms`.`ems_mail_queue` (
-  `insert_date` DATETIME NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `main_body` TEXT NULL,
   `subject` TEXT NULL,
   `from` TEXT NULL,

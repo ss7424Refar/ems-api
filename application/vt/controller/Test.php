@@ -103,12 +103,21 @@ class Test extends Controller {
 //        $usr = Db::table('ems_user')->where('USER_ID', '500323')
 //            ->where('IS_DELETED', 0)->find();
 //        dump($usr);
-        $s = 1;
-
-        if (0 != $s) {
-            echo 1;
-        }
-
-
+//        $address = [];
+//        $subSqlA = Db::table('ems_user')->where('SECTION', '2271')
+//            ->where('IS_DELETED', 0)->buildSql();
+//        // 查询T系统roleId 为课长
+//        $subSqlB = Db::table('users')->whereIn('role_id', [T_MANAGER, S_MANAGER])->buildSql();
+//
+//        $res = Db::table($subSqlA . ' a')
+//            ->join([$subSqlB=> 'b'], 'a.id=b.ems_uid')->field('MAIL')->select();
+//
+//        foreach ($res as $key => $value) {
+//            $address[] = $value['MAIL'];
+//        }
+//        dump($address);
+        $user = Db::table('ems_user')->where('user_id', '500678')->where('IS_DELETED', 0)
+            ->find();
+        dump($user['USER_NAME']);
     }
 }
