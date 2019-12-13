@@ -129,3 +129,29 @@ ALTER TABLE `ems_main_engine`
 ALTER TABLE `tpms`.`ems_main_engine`
   CHANGE COLUMN `scrap_operator` `scrap_operator` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '报废操作者' ;
 
+
+-- 添加function
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `GETFIXEDNO`() RETURNS varchar(20) CHARSET utf8
+  BEGIN
+    DECLARE Code1 varchar(20);
+    DECLARE Code2 varchar(20);
+    DECLARE MinCodeInYear varchar(20);
+    DECLARE MaxCodeInYear varchar(20);
+    SET MinCodeInYear=concat(SUBSTRING(date_format(curdate(),'%Y%m'),3),'001');
+    SET MaxCodeInYear=concat(SUBSTRING(date_format(curdate(),'%Y%m'),3),'999');
+    SET Code1=(SELECT MAX(FIXED_NO) FROM ems_main_engine WHERE FIXED_NO>=MinCodeInYear AND
+                                                               FIXED_NO<=MaxCodeInYear);
+
+
+    IF Code1 IS NOT NULL AND SUBSTRING(date_format(curdate(),'%Y%m'),3)=SUBSTRING(Code1,1,4)
+    THEN
+      SET Code2 = SUBSTRING(Code1, 5,3);
+      SET Code2 =concat(SUBSTRING(Code1, 1,4),lpad(Code2+1,3,0));
+    ELSE
+      SET Code2 =MinCodeInYear;
+    END IF;
+    RETURN Code2;
+  END ;;
+

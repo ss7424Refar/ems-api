@@ -124,7 +124,7 @@ class Flow extends Common {
                             Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
                     } else {
-                        Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
+                        Log::record('[Flow][replyBorrowApplyFromSection] no data ' . $fixed_nos[$i]);
                     }
                 }
                 // 存入邮件队列表中
@@ -171,7 +171,7 @@ class Flow extends Common {
                             Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
                     } else {
-                        Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
+                        Log::record('[Flow][replyBorrowApplyFromSection] no data ' . $fixed_nos[$i]);
                     }
                 }
 
@@ -187,19 +187,231 @@ class Flow extends Common {
                                 'table_data' => json_encode($value)];
 
                         Db::table('ems_mail_queue')->insert($data);
-
-                        return apiResponse(SUCCESS, '[Flow][replyBorrowApplyFromSection] success');
                     }
+                    return apiResponse(SUCCESS, '[Flow][replyBorrowApplyFromSection] success');
                 }
             }
         } catch (Exception $e) {
             Log::record('[Flow][replyBorrowApplyFromSection] error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
-
+        return apiResponse(ERROR, 'server error');
     }
 
     public function replyBorrowApplyFromSample() {
+       try {
+           $userId = $this->loginUser['ems'];
+
+           $judge = $this->request->param('judge');
+           $predictDate = $this->request->param('predictDate'); // 预计归还时间
+           $fixed_nos = json_decode($this->request->param('fixed_nos'));
+
+           $user = $this->getUserInfoById($userId);
+
+           $inputData = array();
+           // 分配
+           if ('agree' == $judge) {
+               for ($i = 0; $i < count($fixed_nos); $i++) {
+                   $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                       ->where('model_status', ASSIGNING)->find();
+
+                   if (!empty($query)) {
+                       $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                           ->where('model_status', ASSIGNING)
+                           ->update([
+                               'predict_date'  => $predictDate,
+                               'model_status' => USING
+                           ]);
+
+                       if (1 == $res) {
+                           $tmp['id'] = $query['fixed_no'];
+                           $tmp['name'] = $query['MODEL_NAME'];
+                           $tmp['desc'] = $query['remark'];
+
+                           $inputData[$query['user_id']][] = $tmp;
+
+                           // 添加记录到history中
+                           $updateQuery = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                                            ->find();
+                           $data = ['ID'=>null,
+                                    'FIXED_NO'=>$fixed_nos[$i],
+                                    'user_id'=>$updateQuery['user_id'],
+                                    'user_name'=>$updateQuery['user_name'],
+                                    'start_date'=>$updateQuery['start_date'],
+                                    'predict_date'=>$updateQuery['predict_date'],
+                                    'remark'=>$updateQuery['remark'],
+                                    'approver_id'=>$updateQuery['approver_id'],
+                                    'approver_name'=>$updateQuery['approver_name'],
+                                    'approve_date'=>$updateQuery['approve_date'],
+                                    'assign_operator_name'=>$user['USER_NAME'],
+                                    'assign_operator_ID'=>$user['USER_ID']
+                                    ];
+
+                           $r = Db::table('ems_borrow_history')->insert($data);
+                           if (1 != $r) {
+                               Log::record('[Flow][replyBorrowApplyFromSample] add history fail ' . $fixed_nos[$i]);
+                           }
+
+                       } else {
+                           Log::record('[Flow][replyBorrowApplyFromSample] update fail ' . $fixed_nos[$i]);
+                       }
+                   } else {
+                       Log::record('[Flow][replyBorrowApplyFromSample] no data ' . $fixed_nos[$i]);
+                   }
+               }
+
+               if (!empty($inputData)) {
+                   foreach ($inputData as $key => $value) {
+                       $to = $this->getUserInfoById($key);
+                       $subject = MailTemplate::$subjectBorrowApplyApproveFromSample.$user['USER_NAME'];
+                       $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSample($to['USER_NAME']);
+
+                       // 插入数据
+                       $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                           'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])),
+                           'table_data' => json_encode($value)];
+
+                       Db::table('ems_mail_queue')->insert($data);
+                   }
+                   return apiResponse(SUCCESS, '[Flow][replyBorrowApplyFromSample] success');
+               }
+           } else {
+               for ($i = 0; $i < count($fixed_nos); $i++) {
+                   $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                       ->where('model_status', ASSIGNING)->find();
+
+                   if (!empty($query)) {
+                       $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                           ->where('model_status', ASSIGNING)
+                           ->update([
+                               'user_name'    => null,
+                               'user_id'      => null,
+                               'approver_id'    => null,
+                               'start_date'    => null,
+                               'approve_date'  => null,
+                               'approver_name'  => null,
+                               'model_status' => IN_STORE,
+                           ]);
+
+                       if (1 == $res) {
+                           $tmp['id'] = $query['fixed_no'];
+                           $tmp['name'] = $query['MODEL_NAME'];
+                           $tmp['desc'] = $query['remark'];
+
+                           $inputData[$query['user_id']][] = $tmp;
+
+                       } else {
+                           Log::record('[Flow][replyBorrowApplyFromSample] update fail ' . $fixed_nos[$i]);
+                       }
+                   } else {
+                       Log::record('[Flow][replyBorrowApplyFromSample] no data ' . $fixed_nos[$i]);
+                   }
+               }
+               if (!empty($inputData)) {
+                   foreach ($inputData as $key => $value) {
+                       $to = $this->getUserInfoById($key);
+                       $subject = MailTemplate::$subjectBorrowApplyRejectFromSample.$user['USER_NAME'];
+                       $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSample($to['USER_NAME']);
+
+                       // 插入数据
+                       $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                           'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
+                           'table_data' => json_encode($value)];
+
+                       Db::table('ems_mail_queue')->insert($data);
+                   }
+                   return apiResponse(SUCCESS, '[Flow][replyBorrowApplyFromSection] success');
+               }
+           }
+
+       } catch (Exception $e) {
+           Log::record('[Flow][replyBorrowApplyFromSample] error' . $e->getMessage());
+           return apiResponse(ERROR, 'server error');
+       }
+        return apiResponse(ERROR, 'server error');
+    }
+
+    public function returnSample() {
+        try {
+            $userId = $this->loginUser['ems'];
+
+            $fixed_nos = json_decode($this->request->param('fixed_nos'));
+
+            $user = $this->getUserInfoById($userId);
+
+            $inputData = array();
+
+            for ($i = 0; $i < count($fixed_nos); $i++) {
+                $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                    ->where('model_status', USING)->find();
+
+                if (!empty($query)) {
+                    $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                        ->where('model_status', USING)
+                        ->update([
+                            'user_name'    => null,
+                            'user_id'      => null,
+                            'approver_id'    => null,
+                            'start_date'    => null,
+                            'approve_date'  => null,
+                            'approver_name'  => null,
+                            'predict_date'  => null,
+                            'model_status' => IN_STORE
+                        ]);
+
+                    if (1 == $res) {
+                        $tmp['id'] = $query['fixed_no'];
+                        $tmp['name'] = $query['MODEL_NAME'];
+                        $tmp['desc'] = $query['remark'];
+
+                        $inputData[$query['user_id']][] = $tmp;
+
+                        // 更新记录到history中
+                        $data = [
+                            'end_date' => Db::raw('now()'), // 使用结束时间
+                            'confirm_operator_id'=>$user['USER_ID'],
+                            'confirm_operator_name'=>$user['USER_NAME']
+                        ];
+
+                        $r = Db::table('ems_borrow_history')->where('fixed_no', $fixed_nos[$i])
+                                        ->whereNull('end_date')->whereNull('confirm_operator_id')
+                                        ->whereNull('confirm_operator_name')->update($data);
+                        if (1 != $r) {
+                            Log::record('[Flow][returnSample] update history fail ' . $fixed_nos[$i]);
+                        }
+
+                    } else {
+                        Log::record('[Flow][returnSample] update fail ' . $fixed_nos[$i]);
+                    }
+                } else {
+                    Log::record('[Flow][returnSample] no data ' . $fixed_nos[$i]);
+                }
+            }
+
+            if (!empty($inputData)) {
+                foreach ($inputData as $key => $value) {
+                    $to = $this->getUserInfoById($key);
+                    $subject = MailTemplate::$subjectReturnSample.$user['USER_NAME'];
+                    $mainBody = MailTemplate::getReturnSample($to['USER_NAME']);
+
+                    // 插入数据
+                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                        'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
+                        'table_data' => json_encode($value)];
+
+                    Db::table('ems_mail_queue')->insert($data);
+                }
+                return apiResponse(SUCCESS, '[Flow][returnSample] success');
+            }
+
+        } catch (Exception $e) {
+            Log::record('[Flow][returnSample] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+        return apiResponse(ERROR, 'server error');
+    }
+
+    public function deleteApply() {
 
 
     }

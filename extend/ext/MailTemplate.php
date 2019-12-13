@@ -10,13 +10,15 @@ namespace ext;
 
 class MailTemplate {
 
-    public static $subjectBorrowApply = '[样机借出审批] Workflow from ';
-    public static $subjectBorrowApplyApproveFromSection = '[样机借出审批通过] Workflow from ';
-    public static $subjectBorrowApplyRejectFromSection = '[样机借出审批拒绝] Workflow from ';
-    public static $subjectUsing = 'Workflow:现有样机使用确认(';
-    public static $subjectDeleteApprove = 'Workflow:现有样机删除审批(';
-    public static $subjectScrapApprove = 'Workflow:现有样机报废审批(';
-    public static $subjectEnding = ')';
+    public static $subjectBorrowApply = '[样品借出审批] Workflow from ';
+
+    public static $subjectBorrowApplyApproveFromSection = '[样品借出审批通过] Workflow from ';
+    public static $subjectBorrowApplyRejectFromSection = '[样品借出审批拒绝] Workflow from ';
+
+    public static $subjectBorrowApplyApproveFromSample = '[样品分配通过] Workflow from ';
+    public static $subjectBorrowApplyRejectFromSample = '[样品分配拒绝] Workflow from ';
+
+    public static $subjectReturnSample = '[样品归还] Workflow from ';
 
     public static function getBorrowApplyMainBody($section, $user) {
         return
@@ -36,6 +38,27 @@ class MailTemplate {
         return
             '<p>Dear '. $user. '</p>'.
             '<p>如下样机审批拒绝, 请登录样品管理系统确认及审批, 谢谢!</p>';
+
+    }
+
+    public static function getReplyApproveBorrowApplyFromSample($user) {
+        return
+            '<p>Dear '. $user. '</p>'.
+            '<p>如下样机分配通过, 请及时到样品管理库取得样品, 谢谢!</p>';
+
+    }
+
+    public static function getReplyRejectBorrowApplyFromSample($user) {
+        return
+            '<p>Dear '. $user. '</p>'.
+            '<p>如下样机分配拒绝, 请登录样品管理系统确认, 谢谢</p>';
+
+    }
+
+    public static function getReturnSample($user) {
+        return
+            '<p>Dear '. $user. '</p>'.
+            '<p>如下样机已归还, 请登录样品管理系统确认, 谢谢</p>';
 
     }
 

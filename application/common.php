@@ -88,42 +88,102 @@ function getFormArray($formData) {
 
     if ($formData) {
         $formData = json_decode($formData);
-        if (!empty($formData->fixed)) {
-            $data['fixed_no'] = $formData->fixed;
+
+        foreach ($formData as $key => $value) {
+            if (!empty($value)) {
+                $data[$key] = $value;
+            }
         }
-        if (!empty($formData->names)) {
-            $data['MODEL_NAME'] = ['like', '%' . $formData->names . '%'];
-        }
-        if (!empty($formData->type)) {
-            $data['type'] = ['like', '%' . $formData->type . '%'];
-        }
-        if (!empty($formData->user)) {
-            $data['user_name'] = $formData->user;
-        }
-        if (!empty($formData->history_user)) {
-            $data['historyUser'] = ['like', '%' . $formData->history_user . '%'];
-        }
-        if (!empty($formData->location)) {
-            $data['location'] = $formData->location;
-        }
-        if (null != $formData->status) {
-            $data['model_status'] = $formData->status;
-        }
-        if (!empty($formData->depart)) {
-            $data['department'] = $formData->depart;
-        }
-        if (!empty($formData->section)) {
-            $data['section_manager'] = $formData->section;
-        }
-        if (!empty($formData->cpu)) {
-            $data['cpu'] = ['like', '%' . $formData->cpu . '%'];
-        }
-        if (!empty($formData->memory)) {
-            $data['MEMORY'] = ['like', '%' . $formData->memory . '%'];
-        }
-        if (!empty($formData->hardware)) {
-            $data['HDD'] = ['like', '%' . $formData->hardware . '%'];
-        }
+//        // 资产编号
+//        if (!empty($formData->fixed_no)) {
+//            $data['fixed_no'] = $formData->fixed_no;
+//        }
+//        // 资产名称
+//        if (!empty($formData->MODEL_NAME)) {
+//            $data['MODEL_NAME'] = $formData->MODEL_NAME;
+//        }
+//        // 资产序列号
+//        if (!empty($formData->SERIAL_NO)) {
+//            $data['SERIAL_NO'] = $formData->SERIAL_NO;
+//        }
+//        // type
+//        if (!empty($formData->type)) {
+//            $data['type'] = $formData->type;
+//        }
+//        // 流水号（退运&出关，请用此号码）
+//        if (!empty($formData->serial_number)) {
+//            $data['serial_number'] = $formData->serial_number;
+//        }
+//        // 发票号
+//        if (!empty($formData->invoice_no)) {
+//            $data['invoice_no'] = $formData->invoice_no;
+//        }
+//        // 购买日期
+//        if (!empty($formData->purchase_date)) {
+//            $data['purchase_date'] = $formData->purchase_date;
+//        }
+//        // 发票日期
+//        if (!empty($formData->invoice_date)) {
+//            $data['invoice_date'] = $formData->invoice_date;
+//        }
+//        // 保修日期
+//        if (!empty($formData->warranty_date)) {
+//            $data['warranty_date'] = $formData->warranty_date;
+//        }
+//        // 实际价格
+//        if (null != $formData->actual_price) {
+//            $data['actual_price'] = $formData->actual_price;
+//        }
+//        // 含税价格
+//        if (!empty($formData->tax_inclusive_price)) {
+//            $data['tax_inclusive_price'] = $formData->tax_inclusive_price;
+//        }
+//        // 位置
+//        if (!empty($formData->location)) {
+//            $data['location'] = $formData->location;
+//        }
+//        // 备注
+//        if (!empty($formData->remark)) {
+//            $data['remark'] = $formData->remark;
+//        }
+//        // cpu
+//        if (!empty($formData->CPU)) {
+//            $data['CPU'] = $formData->CPU;
+//        }
+//        // HDD
+//        if (!empty($formData->HDD)) {
+//            $data['HDD'] = $formData->HDD;
+//        }
+//        // MEMORY
+//        if (!empty($formData->MEMORY)) {
+//            $data['MEMORY'] = $formData->MEMORY;
+//        }
+//        // mac地址
+//        if (!empty($formData->mac_address)) {
+//            $data['mac_address'] = $formData->mac_address;
+//        }
+//        // 光驱
+//        if (!empty($formData->cd_rom)) {
+//            $data['cd_rom'] = $formData->cd_rom;
+//        }
+//        // 屏幕尺寸
+//        if (!empty($formData->screen_size)) {
+//            $data['screen_size'] = $formData->screen_size;
+//        }
+//        // 部门
+//        if (!empty($formData->department)) {
+//            $data['department'] = $formData->department;
+//        }
+//        // 课
+//        if (!empty($formData->section_manager)) {
+//            $data['section_manager'] = $formData->section_manager;
+//        }
+//        // 供应商
+//        if (!empty($formData->supplier)) {
+//            $data['supplier'] = $formData->supplier;
+//        }
+
+
     }
 
     return $data;

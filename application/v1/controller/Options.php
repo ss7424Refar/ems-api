@@ -61,6 +61,15 @@ class Options extends Common {
         return apiResponse(SUCCESS, '[Options][getStatus] success', $this->getKeyValue($status));
     }
 
+    public function getLinks() {
+        $depart = $this->request->param('depart');
+
+        $links = json_decode(LINKS, true);
+
+        if (array_key_exists($depart, $links)) {
+            return apiResponse(SUCCESS, '[Options][getLinks] success', $links[$depart]);
+        }
+    }
     private function getKeyValue($arr) {
         $jsonResult = array();
         foreach($arr as $key => $value){

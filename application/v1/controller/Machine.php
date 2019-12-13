@@ -98,4 +98,52 @@ class Machine extends Common {
         }
     }
 
+    public function add() {
+        $formData = $this->request->param('formData');
+
+        $data = getFormArray($formData);
+
+        // #modelStatus#,#createUser#,sysdate(),#userName#
+        // model_status,instore_operator,instore_date,user_name
+        $data['model_status'] = IN_STORE;
+        $data['instore_operator'] = $this->loginUser['ems']; // 老系统有些并没有存入这个字段
+        $data['instore_date'] = Db::raw('now()');
+
+        try {
+            $res = Db::table('ems_main_engine')->insert($data);
+
+            if (1 == $res) {
+                return apiResponse(SUCCESS, '[Machine][add] success');
+            } else {
+                return apiResponse(ERROR, 'server error');
+            }
+        } catch (Exception $e) {
+            Log::record('[Machine][add] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+    }
+
+    public function edit() {
+        $formData = $this->request->param('formData');
+
+        $data = getFormArray($formData);
+        try {
+            $res = Db::table('ems_main_engine')->update($data);
+
+            if (1 == $res) {
+                return apiResponse(SUCCESS, '[Machine][edit] success');
+            } else {
+                return apiResponse(ERROR, 'server error');
+            }
+        } catch (Exception $e) {
+            Log::record('[Machine][edit] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+    }
+
+    public function getLastId() {
+        // 老系统就有个函数, 以年+月+000格式划分编号, 每月最多999, 超过则变为001, 一般每月不会录入1000台.
+        $res = Db::query('select GETFIXEDNO() as fixed');
+        return apiResponse(SUCCESS, '[Machine][getLastId] success', $res[0]);
+    }
 }

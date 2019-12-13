@@ -116,8 +116,9 @@ class Test extends Controller {
 //            $address[] = $value['MAIL'];
 //        }
 //        dump($address);
-        $user = Db::table('ems_user')->where('user_id', '500678')->where('IS_DELETED', 0)
-            ->find();
-        dump($user['USER_NAME']);
+        $data['CPU'] = 111;
+        $data['fixed_no'] = 1912001;
+        $data['MODEL_NAME'] = 'qweqwe';
+        Db::table('ems_main_engine')->insert($data);
     }
 }
