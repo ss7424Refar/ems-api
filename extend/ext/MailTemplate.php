@@ -24,8 +24,8 @@ class MailTemplate {
     public static $subjectDeleteApplyRejectFromSection = '[样品删除审批拒绝] Workflow from ';
 
     public static $subjectScrapApply = '[样品报废审批] Workflow from ';
-    public static $subjectScrapApplyApproveFromSection = '[样品报废审批通过] Workflow from ';
-    public static $subjectScrapApplyRejectFromSection = '[样品报废审批拒绝] Workflow from ';
+    public static $subjectScrapApplyApproveFromSample = '[样品报废审批通过] Workflow from ';
+    public static $subjectScrapApplyRejectFromSample = '[样品报废审批拒绝] Workflow from ';
 
     public static function getBorrowApply($section, $user) {
         return
@@ -37,14 +37,14 @@ class MailTemplate {
     public static function getReplyApproveBorrowApplyFromSection() {
         return
             '<p>Dear Sample Manager</p>'.
-            '<p>如下样机审批通过, 请登录样品管理系统确认及审批, 谢谢!</p>';
+            '<p>如下样机审批通过, 请登录样品管理系统确认, 谢谢!</p>';
 
     }
 
     public static function getReplyRejectBorrowApplyFromSection($user) {
         return
             '<p>Dear '. $user. '</p>'.
-            '<p>如下样机审批拒绝, 请登录样品管理系统确认及审批, 谢谢!</p>';
+            '<p>如下样机审批拒绝, 请登录样品管理系统确认, 谢谢!</p>';
 
     }
 
@@ -79,14 +79,14 @@ class MailTemplate {
     public static function getDeleteApproveFromSection() {
         return
             '<p>Dear Sample Manager</p>'.
-            '<p>如下样机审批通过, 请登录样品管理系统确认及审批, 谢谢!</p>';
+            '<p>如下样机审批通过, 请登录样品管理系统确认, 谢谢!</p>';
 
     }
 
     public static function getDeleteRejectFromSection() {
         return
             '<p>Dear Sample Manager</p>'.
-            '<p>如下样机审批拒绝, 请登录样品管理系统确认及审批, 谢谢!</p>';
+            '<p>如下样机审批拒绝, 请登录样品管理系统确认, 谢谢!</p>';
 
     }
 
@@ -97,17 +97,17 @@ class MailTemplate {
 
     }
 
-    public static function getScrapApproveFromSample($user) {
+    public static function getScrapApproveFromSample() {
         return
-            '<p>Dear '. $user. '</p>'.
-            '<p>如下样机审批通过, 请登录样品管理系统确认及审批, 谢谢!</p>';
+            '<p>Dear Sample Manager</p>'.
+            '<p>如下样机审批通过, 请登录样品管理系统确认, 谢谢!</p>';
 
     }
 
-    public static function getScrapRejectFromSample($user) {
+    public static function getScrapRejectFromSample() {
         return
-            '<p>Dear '. $user. '</p>'.
-            '<p>如下样机审批拒绝, 请登录样品管理系统确认及审批, 谢谢!</p>';
+            '<p>Dear Sample Manager</p>'.
+            '<p>如下样机审批拒绝, 请登录样品管理系统确认, 谢谢!</p>';
 
     }
 

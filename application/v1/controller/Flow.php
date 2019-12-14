@@ -67,7 +67,7 @@ class Flow extends Common {
             if (!empty($inputData)) {
                 foreach ($inputData as $sec => $value) {
                     $to = $this->getSectionAddress($sec);
-                    $section = $sectionArray[$sec];
+                    $section = $sectionArray[$userInfo['SECTION']];
                     $subject = MailTemplate::$subjectBorrowApply. $section. ' '.$user;
                     $mainBody = MailTemplate::getBorrowApply($section, $user);
 
@@ -460,7 +460,7 @@ class Flow extends Common {
             if (!empty($inputData)) {
                 foreach ($inputData as $sec => $value) {
                     $to = $this->getSectionAddress($sec);
-                    $section = $sectionArray[$sec];
+                    $section = $sectionArray[$userInfo['SECTION']];
                     $subject = MailTemplate::$subjectDeleteApply. $section. ' '.$user;
                     $mainBody = MailTemplate::getDeleteApply($section, $user);
 
@@ -480,7 +480,7 @@ class Flow extends Common {
         return apiResponse(ERROR, 'server error');
 
     }
-
+    // 老系统删除审批 【同意】 【不同意】 都不发送邮件
     public function replyDeleteApplyFromSection() {
         try {
             $userId = $this->loginUser['ems'];
@@ -553,7 +553,7 @@ class Flow extends Common {
                             $tmp['name'] = $query['MODEL_NAME'];
                             $tmp['desc'] = $query['remark'];
 
-                            $inputData[][] = $tmp;
+                            $inputData[] = $tmp;
                         } else {
                             Log::record('[Flow][replyDeleteApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
@@ -607,16 +607,15 @@ class Flow extends Common {
             for ($i = 0; $i < count($fixed_nos); $i++) {
 
                 $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
-                    ->where('model_status', IN_STORE)->where('user_id', null)->find();
+                    ->where('model_status', IN_STORE)->find();
                 if (!empty($query)) {
                     // 更新状态
                     $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
-                        ->where('model_status', IN_STORE)->where('user_id', null)
+                        ->where('model_status', IN_STORE)
                         ->update([
                             'model_status'    => SCRAP_REVIEW,
                             'scrap_operator'      => $user, // 老系统存入的就为用户名
-                            'scrap_date' => Db::raw('now()'),
-                            'user_id'    => $userId        // 这里存入不是使用者的意思，表示申请者
+                            'scrap_date' => Db::raw('now()')
                         ]);
 
                     // 更新成功
@@ -625,7 +624,7 @@ class Flow extends Common {
                         $tmp['name'] = $query['MODEL_NAME'];
                         $tmp['desc'] = $query['remark'];
 
-                        $inputData[$query['user_id']][] = $tmp;
+                        $inputData[] = $tmp;
                     } else {
                         Log::record('[Flow][scrapApply] update fail ' . $fixed_nos[$i]);
                     }
@@ -635,17 +634,17 @@ class Flow extends Common {
 
             // 存入邮件队列表中
             if (!empty($inputData)) {
-                foreach ($inputData as $key => $value) {
-                    $to = $this->getSampleAddress(EMS_AUDITOR);
+                $to = $this->getSampleAddress(EMS_AUDITOR);
 
-                    $subject = MailTemplate::$subjectScrapApply.$user;
-                    $mainBody = MailTemplate::getScrapApply();
+                $subject = MailTemplate::$subjectScrapApply.$user;
+                $mainBody = MailTemplate::getScrapApply();
 
-                    // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
-                        'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($value)];
-                    Db::table('ems_mail_queue')->insert($data);
-                }
+                // 插入数据
+                $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
+
+                Db::table('ems_mail_queue')->insert($data);
+
                 return apiResponse(SUCCESS, '[Flow][scrapApply] success');
             }
 
@@ -669,7 +668,7 @@ class Flow extends Common {
 
             $inputData = array();
             if ('agree' == $judge) {
-                // 审批员同意， 则删除机器
+                // 审批员同意
                 for ($i = 0; $i < count($fixed_nos); $i++) {
                     $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                         ->where('model_status', SCRAP_REVIEW)->find();
@@ -689,7 +688,7 @@ class Flow extends Common {
                             $tmp['name'] = $query['MODEL_NAME'];
                             $tmp['desc'] = $query['remark'];
 
-                            $inputData[$query['user_id']][] = $tmp;
+                            $inputData[] = $tmp;
                         } else {
                             Log::record('[Flow][replyScrapApplyFromSample] delete fail ' . $fixed_nos[$i]);
                         }
@@ -699,18 +698,17 @@ class Flow extends Common {
                 }
                 // 存入邮件队列表中
                 if (!empty($inputData)) {
-                    foreach ($inputData as $key => $value) {
-                        $to = $this->getUserInfoById($key);
-                        $subject = MailTemplate::$subjectDeleteApplyApproveFromSection.$user['USER_NAME'];
-                        $mainBody = MailTemplate::getDeleteApproveFromSection($to['USER_NAME']);
+                    $to = $this->getSampleAddress(EMS_ADMIN);
+                    $subject = MailTemplate::$subjectScrapApplyApproveFromSample.$user['USER_NAME'];
+                    $mainBody = MailTemplate::getScrapApproveFromSample();
 
-                        // 插入数据
-                        $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
-                            'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
-                            'table_data' => json_encode($value)];
+                    // 插入数据
+                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                        'from'=>$user['MAIL'], 'to'=>json_encode($to), // 定时任务判断是数组
+                        'table_data' => json_encode($inputData)];
 
-                        Db::table('ems_mail_queue')->insert($data);
-                    }
+                    Db::table('ems_mail_queue')->insert($data);
+
                     return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSample] success');
                 }
 
@@ -718,16 +716,18 @@ class Flow extends Common {
                 // 更新状态到在库
                 for ($i = 0; $i < count($fixed_nos); $i++) {
                     $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
-                        ->where('model_status', DELETE_REVIEW)->find();
+                        ->where('model_status', SCRAP_REVIEW)->find();
 
                     if (!empty($query)) {
                         $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
-                            ->where('model_status', DELETE_REVIEW)
+                            ->where('model_status', SCRAP_REVIEW)
                             ->update([
                                 'scrap_operator'      => null, // 老系统还会更新approve_id等根本没啥卵用
                                 'scrap_date' => null,
-                                'user_id'    => null,
-                                'model_status'    => IN_STORE,
+                                'approver_id'    => null,
+                                'approve_date'  => null,
+                                'approver_name'  => null,
+                                'model_status'    => IN_STORE
                             ]);
 
                         if (1 == $res) {
@@ -735,7 +735,7 @@ class Flow extends Common {
                             $tmp['name'] = $query['MODEL_NAME'];
                             $tmp['desc'] = $query['remark'];
 
-                            $inputData[$query['user_id']][] = $tmp;
+                            $inputData[] = $tmp;
                         } else {
                             Log::record('[Flow][replyScrapApplyFromSample] update fail ' . $fixed_nos[$i]);
                         }
@@ -745,18 +745,17 @@ class Flow extends Common {
                 }
 
                 if (!empty($inputData)) {
-                    foreach ($inputData as $key => $value) {
-                        $to = $this->getUserInfoById($key);
-                        $subject = MailTemplate::$subjectDeleteApplyRejectFromSection.$user['USER_NAME'];
-                        $mainBody = MailTemplate::getDeleteRejectFromSection($to['USER_NAME']);
+                    $to = $this->getSampleAddress(EMS_ADMIN);
+                    $subject = MailTemplate::$subjectScrapApplyRejectFromSample.$user['USER_NAME'];
+                    $mainBody = MailTemplate::getScrapRejectFromSample();
 
-                        // 插入数据
-                        $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
-                            'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
-                            'table_data' => json_encode($value)];
+                    // 插入数据
+                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                        'from'=>$user['MAIL'], 'to'=>json_encode($to), // 定时任务判断是数组
+                        'table_data' => json_encode($inputData)];
 
-                        Db::table('ems_mail_queue')->insert($data);
-                    }
+                    Db::table('ems_mail_queue')->insert($data);
+
                     return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSample] success');
                 }
             }
