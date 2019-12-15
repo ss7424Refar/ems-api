@@ -32,18 +32,8 @@ class Excel extends Common{
         $map = getSearchCondition($formData);
 
         try {
-            // field 暂时不用
-            $columns = Db::table('information_schema.columns')
-                ->field('column_name as field, column_comment as comment')
-                ->where('table_name', 'ems_main_engine')
-                ->where('table_schema', config('database.database'))->select();
-
-            // 头部
-            $column =[];
-            foreach ($columns as $value) {
-                $column[] = $value['comment'];
-            }
-
+            // 列名
+            $column = getColumns('comment');
             // 文件名
             $filename = 'machine_info_' . time() . '.csv';
 
@@ -79,31 +69,11 @@ class Excel extends Common{
                         ->select();
             }
 
-            // 获取常量
-            $statusArray = json_decode(STATUS, true);
-            $departArray = json_decode(DEPART, true);
-            $sectionArray = json_decode(SECTION, true);
-
+            $list = itemChange($list);
             // 生成csv
             foreach ($list as $row) {
                 $item = [];
-                foreach ($row as $key => $value) {
-                    // 其中有个字段是为null的, 所以数组会存在越界
-                    if ('model_status' == $key) {
-                        if (null != $value) {
-                            $value = $statusArray[$value];
-                        }
-                    }
-                    if ('department' == $key) {
-                        if (null != $value) {
-                            $value = $departArray[$value];
-                        }
-                    }
-                    if ('section_manager' == $key) {
-                        if (null != $value) {
-                            $value = $sectionArray[$value];
-                        }
-                    }
+                foreach ($row as $value) {
                     $item[] = mb_convert_encoding($value,'GBK','UTF-8');
                 }
 

@@ -4,7 +4,6 @@ namespace app\v1\controller;
 use think\Db;
 use think\Exception;
 use think\Log;
-use ext\MailerUtil;
 
 class Machine extends Common {
     /**
@@ -40,6 +39,7 @@ class Machine extends Common {
             if (empty($map['historyUser'])) {
                 $res = Db::table('ems_main_engine')->where($map)->order('instore_date desc')
                         ->limit($offset, $pageSize)->select();
+                $res = itemChange($res);
 
                 $total = Db::table('ems_main_engine')->where($map)->count();
 
@@ -61,6 +61,7 @@ class Machine extends Common {
                         ->order('instore_date desc')
                         ->limit($offset, $pageSize)->select();
 
+                $res = itemChange($res);
                 $total = Db::table($sqlA . ' a')->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')->count();
 
                 $jsonRes['total'] = $total;
@@ -90,7 +91,7 @@ class Machine extends Common {
         try {
             $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_no)->find();
 
-            return apiResponse(SUCCESS, '[Machine][getMachineById] success', $res);
+            return apiResponse(SUCCESS, '[Machine][getMachineById] success', itemChange($res));
 
         } catch (Exception $e) {
             Log::record('[Machine][getMachineById] error' . $e->getMessage());
@@ -146,4 +147,5 @@ class Machine extends Common {
         $res = Db::query('select GETFIXEDNO() as fixed');
         return apiResponse(SUCCESS, '[Machine][getLastId] success', $res[0]);
     }
+
 }

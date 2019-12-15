@@ -12,6 +12,8 @@
 // 应用公共文件
 
 use think\Request;
+use think\Db;
+use think\Log;
 
 function getHttpHeader() {
     // 解决跨域通配符*与include报错
@@ -183,8 +185,42 @@ function getFormArray($formData) {
 //            $data['supplier'] = $formData->supplier;
 //        }
 
-
     }
 
     return $data;
+}
+
+
+function itemChange($list) {
+    $statusArray = json_decode(STATUS, true);
+    $departArray = json_decode(DEPART, true);
+    $sectionArray = json_decode(SECTION, true);
+
+    foreach ($list as $key => $row) {
+        $list[$key]['model_status'] = $statusArray[$row['model_status']];
+        $list[$key]['department'] = $departArray[$row['department']];
+        $list[$key]['section_manager'] = $sectionArray[$row['section_manager']];
+    }
+
+    return $list;
+}
+
+function getColumns($type) {
+    // 头部
+    $column =[];
+
+    try {
+        $columns = Db::table('information_schema.columns')
+            ->field('column_name as field, column_comment as comment')
+            ->where('table_name', 'ems_main_engine')
+            ->where('table_schema', config('database.database'))->select();
+
+        foreach ($columns as $value) {
+            $column[] = $value[$type];
+        }
+        return $column;
+    } catch (Exception $e) {
+        Log::record('[Machine][getColumns] error' . $e->getMessage());
+    }
+    return $column;
 }

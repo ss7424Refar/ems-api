@@ -116,9 +116,32 @@ class Test extends Controller {
 //            $address[] = $value['MAIL'];
 //        }
 //        dump($address);
-        $data['CPU'] = 111;
-        $data['fixed_no'] = 1912001;
-        $data['MODEL_NAME'] = 'qweqwe';
-        Db::table('ems_main_engine')->insert($data);
+        $allData = Db::table('ems_main_engine')->where('model_status', USING)
+            ->order('fixed_no desc')->select();
+
+
+        $allData = itemChange($allData);
+        $column = getColumns('field');
+
+        $search = $this->request->param('search');
+
+        if (null != $search) {
+            foreach ($allData as $key => $row) {
+                $rowExist = false;
+                foreach ($column as $value) {
+                    // 包含
+                    if (stristr($row[$value], $search) !== false) {
+                        $rowExist = true;
+                        break;
+                    }
+
+                }
+                // 不存在的话删除
+                if (!$rowExist) {
+                    unset($allData[$key]);
+                }
+            }
+        }
+        dump(array_slice($allData, 0, 6));
     }
 }

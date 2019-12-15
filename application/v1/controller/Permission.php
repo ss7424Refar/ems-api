@@ -92,6 +92,10 @@ class Permission extends Common {
 
             $jsonResult = array();
 
+            // 先查询user_name
+            $usr = Db::table('ems_user')->where('USER_ID', $userInfo['ems'])
+                ->where('IS_DELETED', 0)->find();
+
             for ($i = 0; $i < count($res); $i++) {
                 $desc = $res[$i]['description'];
                 $status = $statusList[$desc];
@@ -126,9 +130,12 @@ class Permission extends Common {
                     }
                 } elseif ('ems_nav_delete_review' == $desc) {
                     // 如果是Admin 显示所有数据
-                    if (ADMIN == $userInfo['roleId'] || EMS_ADMIN == $userInfo['roleId']) {
-                        // 提交申请删除的机子 (没有delete_user_id字段所以显示全部)
+                    if (ADMIN == $userInfo['roleId']) {
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)->count();
+                    } elseif (EMS_ADMIN == $userInfo['roleId']) {
+                        // 只统计自己申请的机子
+                        $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
+                            ->where('scrap_operator', $usr['USER_NAME'])->count();
                     } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId']) {
                         // 只统计自己课下的机子
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
@@ -136,12 +143,8 @@ class Permission extends Common {
                     }
                 }  elseif ('ems_nav_scrap_review' == $desc) {
                     if (ADMIN == $userInfo['roleId'] || EMS_AUDITOR == $userInfo['roleId']) {
-                        // 提交申请删除的机子 (没有delete_user_id字段所以显示全部)
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)->count();
                     } elseif (EMS_ADMIN == $userInfo['roleId']) {
-                        // 先查询user_name
-                        $usr = Db::table('ems_user')->where('USER_ID', $userInfo['ems'])
-                                    ->where('IS_DELETED', 0)->find();
                         // 只统计自己申请的机子
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
                             ->where('scrap_operator', $usr['USER_NAME'])->count();
@@ -162,4 +165,20 @@ class Permission extends Common {
 
     }
 
+    public function showCancel() {
+        try {
+            $roleId = $this->loginUser['roleId'];
+
+            if (EMS_ADMIN == $roleId) {
+                $jsonResult['showCancel'] = true;
+            } else {
+                $jsonResult['showCancel'] = false;
+            }
+            return apiResponse(SUCCESS, '[Permission][showCancel] success', $jsonResult);
+        } catch (Exception $e) {
+            Log::record('[Permission][showCancel] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+
+    }
 }
