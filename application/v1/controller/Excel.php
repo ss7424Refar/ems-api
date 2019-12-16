@@ -19,10 +19,10 @@ class Excel extends Common{
      * @title EXCEL导出接口
      * @description EXCEL导出接口
      * @method get
-     * @param formData 必选 json {formData: {}}
+     * @param formData 必选 json formData:{}
      * @return 无
      * @url http://domain/ems-api/v1/Excel/export
-     * @remark 别问， 问就是尽力导成了csv 例子： let formData = JSON.stringify(this.form)； window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?' + 'formData=' + formData
+     * @remark `别问， 问就是尽力导成了csv;例子: let formData = JSON.stringify(this.form)； window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?formData={}`
      */
     public function export() {
         set_time_limit(0);

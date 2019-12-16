@@ -60,7 +60,18 @@ class Options extends Common {
 
         return apiResponse(SUCCESS, '[Options][getStatus] success', $this->getKeyValue($status));
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/下拉选项
+     * @title 下拉选项-部门联动课
+     * @description 根据部门下拉框内容联动课
+     * @method post
+     * @url http://domain/ems-api/v1/Options/getLinks
+     * @return {"status":0,"msg":"[Options][getLinks] success","data":{"1884":"SCD","2271":"SWV","2272":"PSD","2274":"FWD","491":"CSV","540":"SSD"}}
+     * @return_param status int 状态码
+     * @return_param msg string 状态码说明
+     * @remark 返回0， 代表获取数据
+     */
     public function getLinks() {
         $depart = $this->request->param('depart');
 

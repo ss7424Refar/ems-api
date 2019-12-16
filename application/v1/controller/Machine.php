@@ -89,16 +89,24 @@ class Machine extends Common {
     public function getMachineById() {
         $fixed_no = $this->request->param('fixed_no');
         try {
-            $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_no)->find();
+            $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_no)->select();
 
             return apiResponse(SUCCESS, '[Machine][getMachineById] success', itemChange($res));
-
         } catch (Exception $e) {
             Log::record('[Machine][getMachineById] error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/机器信息相关
+     * @title 添加样品
+     * @description 添加样品接口
+     * @method post
+     * @url http://domain/ems-api/v1/Machine/add
+     * @param formData 必选 json 表单数据(字段名参考/数据字典)
+     * @return {"status":0,"msg":"[Machine][add] success","data":[]}
+     */
     public function add() {
         $formData = $this->request->param('formData');
 
@@ -123,7 +131,16 @@ class Machine extends Common {
             return apiResponse(ERROR, 'server error');
         }
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/机器信息相关
+     * @title 编辑样品
+     * @description 编辑样品接口
+     * @method post
+     * @url http://domain/ems-api/v1/Machine/edit
+     * @param formData 必选 json 表单数据(字段名参考/数据字典)
+     * @return {"status":0,"msg":"[Machine][edit] success","data":[]}
+     */
     public function edit() {
         $formData = $this->request->param('formData');
 
@@ -141,7 +158,16 @@ class Machine extends Common {
             return apiResponse(ERROR, 'server error');
         }
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/机器信息相关
+     * @title 获取最新的样品编号
+     * @description 编辑界面需要请求最新的样品编号
+     * @method get
+     * @url http://domain/ems-api/v1/Machine/getLastId
+     * @return {"status":0,"msg":"[Machine][getLastId] success","data":{"fixed":"1912003"}}
+     * @return_param fixed int 样品编号
+     */
     public function getLastId() {
         // 老系统就有个函数, 以年+月+000格式划分编号, 每月最多999, 超过则变为001, 一般每月不会录入1000台.
         $res = Db::query('select GETFIXEDNO() as fixed');

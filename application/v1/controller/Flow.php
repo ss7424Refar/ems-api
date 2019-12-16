@@ -14,8 +14,15 @@ use think\Log;
 
 class Flow extends Common {
     /**
-     * 传入类型{"fixed_nos":json..}
-     * @return \think\response\Json
+     * showdoc
+     * @catalog 接口文档/流程相关/申请
+     * @title 样品借出
+     * @description 样品借出
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @return {"status":0,"msg":"[Flow][borrowApply] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/borrowApply
+     * @remark 1.样品申请人->课长; 2.返回状态1代表失败
      */
     public function borrowApply() {
 
@@ -86,7 +93,18 @@ class Flow extends Common {
         }
         return apiResponse(ERROR, 'server error');
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/审批
+     * @title 样品借出(课长)
+     * @description 样品借出(课长)
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param judge 必选 string agree/disagree
+     * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSection] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/replyBorrowApplyFromSection
+     * @remark 1.课长->同意/拒绝; 2.返回状态1代表失败
+     */
     public function replyBorrowApplyFromSection() {
         try {
             $userId = $this->loginUser['ems'];
@@ -197,7 +215,19 @@ class Flow extends Common {
         }
         return apiResponse(ERROR, 'server error');
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关
+     * @title 样品分配
+     * @description 样品分配
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param judge 必选 string agree/disagree
+     * @param predictDate 必选 date 预计归还时间
+     * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSample] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/replyBorrowApplyFromSample
+     * @remark 1.样品管理员->同意/拒绝; 2.返回状态1代表失败
+     */
     public function replyBorrowApplyFromSample() {
        try {
            $userId = $this->loginUser['ems'];
@@ -330,7 +360,17 @@ class Flow extends Common {
        }
         return apiResponse(ERROR, 'server error');
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关
+     * @title 样品归还
+     * @description 样品归还
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @return {"status":0,"msg":"[Flow][returnSample] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/returnSample
+     * @remark 1.样品管理员->归还; 2.返回状态1代表失败
+     */
     public function returnSample() {
         try {
             $userId = $this->loginUser['ems'];
@@ -410,7 +450,17 @@ class Flow extends Common {
         }
         return apiResponse(ERROR, 'server error');
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/申请
+     * @title 样品删除
+     * @description 样品删除
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @return {"status":0,"msg":"[Flow][deleteApply] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/deleteApply
+     * @remark 1.样品管理员(删除申请)->课长; 2.返回状态1代表失败
+     */
     public function deleteApply() {
         try {
             $userId = $this->loginUser['ems'];
@@ -480,6 +530,18 @@ class Flow extends Common {
         return apiResponse(ERROR, 'server error');
 
     }
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/审批
+     * @title 样品删除(课长)
+     * @description 样品删除(课长)
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param judge 必选 string agree/disagree
+     * @return {"status":0,"msg":"[Flow][replyDeleteApplyFromSection] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/replyDeleteApplyFromSection
+     * @remark 1.课长->同意/拒绝; 2.返回状态1代表失败
+     */
     // 老系统删除审批 【同意】 【不同意】 都不发送邮件
     public function replyDeleteApplyFromSection() {
         try {
@@ -586,7 +648,17 @@ class Flow extends Common {
         }
         return apiResponse(ERROR, 'server error');
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/申请
+     * @title 样品报废
+     * @description 样品报废
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @return {"status":0,"msg":"[Flow][scrapApply] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/scrapApply
+     * @remark 1.样品管理员(报废申请)->样品审核员; 2.返回状态1代表失败
+     */
     public function scrapApply() {
         try {
             $userId = $this->loginUser['ems'];
@@ -656,7 +728,18 @@ class Flow extends Common {
         return apiResponse(ERROR, 'server error');
 
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/审批
+     * @title 样品报废(审核员)
+     * @description 样品报废(审核员)
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param judge 必选 string agree/disagree
+     * @return {"status":0,"msg":"[Flow][replyScrapApplyFromSample] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/replyScrapApplyFromSample
+     * @remark 1.样品审核员->同意/拒绝; 2.返回状态1代表失败
+     */
     public function replyScrapApplyFromSample() {
         try {
             $userId = $this->loginUser['ems'];

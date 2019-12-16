@@ -68,7 +68,18 @@ class Permission extends Common {
             return apiResponse(ERROR, 'server error');
         }
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/权限相关
+     * @title 侧边栏的显示隐藏
+     * @description 侧边栏权限显示隐藏接口
+     * @method post
+     * @url http://domain/ems-api/v1/Permission/getNavBarList
+     * @return {"status":0,"msg":"[Permission][getNavBarList] success","data":[{"text":"ems_nav_assign","url":"/allocated","num":0},{"text":"ems_nav_borrow_review","url":"/approval","num":32},{"text":"ems_nav_delete_review","url":"/delapp","num":4},{"text":"ems_nav_return","url":"/returned","num":2},{"text":"ems_nav_scrap_review","url":"/scrapp","num":589}]}
+     * @return_param url string 路由链接
+     * @return_param nums int 状态数目
+     * @remark 造的role_right数据目前只有admin权限
+     */
     public function getNavBarList() {
         // 样机状态与导航栏的对应关系
         $statusList = array('ems_nav_return'=>USING, 'ems_nav_assign'=>ASSIGNING,
