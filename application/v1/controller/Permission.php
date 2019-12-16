@@ -75,7 +75,7 @@ class Permission extends Common {
      * @description 侧边栏权限显示隐藏接口
      * @method post
      * @url http://domain/ems-api/v1/Permission/getNavBarList
-     * @return {"status":0,"msg":"[Permission][getNavBarList] success","data":[{"text":"ems_nav_assign","url":"/allocated","num":0},{"text":"ems_nav_borrow_review","url":"/approval","num":32},{"text":"ems_nav_delete_review","url":"/delapp","num":4},{"text":"ems_nav_return","url":"/returned","num":2},{"text":"ems_nav_scrap_review","url":"/scrapp","num":589}]}
+     * @return {"status":0,"msg":"[Permission][getNavBarList] success","data":[{"text":"待分配","url":"/allocated","num":1},{"text":"待申请审批","url":"/approval","num":32},{"text":"待删除审批","url":"/delapp","num":4},{"text":"待归还","url":"/returned","num":2},{"text":"待报废审批","url":"/scrapp","num":589}]}
      * @return_param url string 路由链接
      * @return_param nums int 状态数目
      * @remark 造的role_right数据目前只有admin权限
@@ -89,6 +89,10 @@ class Permission extends Common {
         $urlList = array('ems_nav_return'=>'/returned', 'ems_nav_assign'=>'/allocated',
             'ems_nav_borrow_review'=>'/approval', 'ems_nav_scrap_review'=>'/scrapp',
             'ems_nav_delete_review'=>'/delapp');
+
+        $nameList = array('ems_nav_return'=>'待归还', 'ems_nav_assign'=>'待分配',
+            'ems_nav_borrow_review'=>'待申请审批', 'ems_nav_scrap_review'=>'待报废审批',
+            'ems_nav_delete_review'=>'待删除审批');
 
         try {
             // 获取T系统账号
@@ -112,7 +116,7 @@ class Permission extends Common {
                 $status = $statusList[$desc];
 
                 $tmp = array();
-                $tmp['text'] = $desc;
+                $tmp['text'] = $nameList[$desc];
                 $tmp['url'] = $urlList[$desc];
 
                 /**

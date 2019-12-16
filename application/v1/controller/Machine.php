@@ -16,9 +16,10 @@ class Machine extends Common {
      * @param limit 必选 int 所需页的大小
      * @param offset 必选 int (当前页码-1)*pageSize
      * @param formData 必选 json 表单信息 (let formData = JSON.stringify(this.form))
-     * @return {"status":0,"msg":"[Machine][getMachineList] success","data":{"total":24893,"rows":[{"fixed_no":"1911623","MODEL_NAME":"Altair LE70 CS2.5 2U-3 Certification ","category":null,"SERIAL_NO":"YK302654H","CPU":"i7-8665U","HDD":"1T","MEMORY":"32GB","type":"PT5B3U-AAA27","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"15.6''","mac_address":null,"cd_rom":"","invoice_no":"iEXPn(Des)201911-0011","location":"库位","department":"29","section_manager":"499","remark":"","model_status":"0","instore_operator":null,"instore_date":"2019-11-27 15:46:31","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"iEXPn(Des)201911-0011","supplier":null},{"fixed_no":"1911622","MODEL_NAME":"Altair LE70 CS2.5 2U-3 Certification ","category":null,"SERIAL_NO":"YK302653H","CPU":"i7-8665U","HDD":"1T","MEMORY":"32GB","type":"PT5B3U-AAA27","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"15.6''","mac_address":null,"cd_rom":"","invoice_no":"iEXPn(Des)201911-0011","location":"库位","department":"29","section_manager":"499","remark":"","model_status":"0","instore_operator":null,"instore_date":"2019-11-27 15:46:31","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"iEXPn(Des)201911-0011","supplier":null}]}}
+     * @return {"status":0,"msg":"[Machine][getMachineList] success","data":{"total":24893,"rows":[{"fixed_no":"1911623","MODEL_NAME":"Altair LE70 CS2.5 2U-3 Certification ","category":null,"SERIAL_NO":"YK302654H","CPU":"i7-8665U","HDD":"1T","MEMORY":"32GB","type":"PT5B3U-AAA27","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"15.6''","mac_address":null,"cd_rom":"","invoice_no":"iEXPn(Des)201911-0011","location":"库位","department":"29","section_manager":"499","remark":"","model_status":"0","instore_operator":null,"instore_date":"2019-11-27 15:46:31","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"iEXPn(Des)201911-0011","supplier":null,"hasApply": true},{"fixed_no":"1911622","MODEL_NAME":"Altair LE70 CS2.5 2U-3 Certification ","category":null,"SERIAL_NO":"YK302653H","CPU":"i7-8665U","HDD":"1T","MEMORY":"32GB","type":"PT5B3U-AAA27","purchase_date":null,"invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"15.6''","mac_address":null,"cd_rom":"","invoice_no":"iEXPn(Des)201911-0011","location":"库位","department":"29","section_manager":"499","remark":"","model_status":"0","instore_operator":null,"instore_date":"2019-11-27 15:46:31","scrap_operator":null,"scrap_date":null,"user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":"","approver_name":null,"serial_number":"iEXPn(Des)201911-0011","supplier":null,"hasApply": false}]}}
      * @return_param status int 状态码
      * @return_param total int 总页数
+     * @return_param hasApply boolean true代表有申请需要显示【取消申请】
      * @remark 需要将formData以json形式传递, {formData:{}}
      */
     public function getMachineList() {
@@ -33,12 +34,26 @@ class Machine extends Common {
         $jsonRes = array();
 
         try {
+
+            $userId = $this->loginUser['ems'];
+
             $res = null;
 
             // 如果没填历史使用者
             if (empty($map['historyUser'])) {
                 $res = Db::table('ems_main_engine')->where($map)->order('instore_date desc')
                         ->limit($offset, $pageSize)->select();
+
+                foreach ($res as $key => $item) {
+                    // 判断是否要有取消申请
+                    if (BORROW_REVIEW == $item['model_status'] && $userId == $item['user_id'] ) {
+                        $item['hasApply'] = true;
+                    } else {
+                        $item['hasApply'] = false;
+                    }
+                    $res[$key] = $item;
+                }
+
                 $res = itemChange($res);
 
                 $total = Db::table('ems_main_engine')->where($map)->count();
@@ -60,6 +75,16 @@ class Machine extends Common {
                         ->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')
                         ->order('instore_date desc')
                         ->limit($offset, $pageSize)->select();
+
+                foreach ($res as $key => $item) {
+                    // 判断是否要有取消申请
+                    if (BORROW_REVIEW == $item['model_status'] && $userId == $item['user_id'] ) {
+                        $item['hasApply'] = true;
+                    } else {
+                        $item['hasApply'] = false;
+                    }
+                    $res[$key] = $item;
+                }
 
                 $res = itemChange($res);
                 $total = Db::table($sqlA . ' a')->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')->count();
