@@ -179,7 +179,17 @@ class Permission extends Common {
         }
 
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/权限相关
+     * @title 取消按钮的显示隐藏
+     * @description 取消按钮的显示隐藏接口
+     * @method post
+     * @url http://domain/ems-api/v1/Permission/showCancel
+     * @return {"status":0,"msg":"[Permission][showCancel] success","data":{"showCancel":false}}
+     * @return_param showCancel boolean 是否显示按钮
+     * @remark 只有样机管理员才显示取消(删除/报废申请)
+     */
     public function showCancel() {
         try {
             $roleId = $this->loginUser['roleId'];

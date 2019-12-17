@@ -21,7 +21,7 @@ class Chart extends Common{
      * @description 样机状态分布表接口
      * @method post
      * @url http://domain/ems-api/v1/Chart/getMachineStatus
-     * @return {"status":0,"msg":"[Chart][getMachineStatus] success","data":{"seriesData":[{"value":12887,"name":"在库"},{"value":21,"name":"待借出审批"},{"value":0,"name":"待分配"},{"value":5223,"name":"使用中"},{"value":589,"name":"待报废审批"},{"value":6154,"name":"已报废"},{"value":4,"name":"待删除审批"},{"value":0,"name":"待删除"},{"value":0,"name":"待报废"}],"legendData":["在库","待借出审批","待分配","使用中","待报废审批","已报废","待删除审批","待删除","待报废"]}}
+     * @return {"status":0,"msg":"[Chart][getMachineStatus] success","data":{"seriesData":[{"value":12834,"name":"在库"},{"value":62,"name":"待借出审批"},{"value":8,"name":"待分配"},{"value":5226,"name":"使用中"},{"value":589,"name":"待报废审批"},{"value":6154,"name":"已报废"},{"value":3,"name":"待删除审批"}],"legendData":["在库","待借出审批","待分配","使用中","待报废审批","已报废","待删除审批"]}}
      * @return_param seriesData array 饼图的值
      * @return_param legendData array 图例的值
      * @remark 返回0， 代表获取数据

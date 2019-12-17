@@ -19,7 +19,7 @@ class Flow extends Common {
      * @title 样品借出
      * @description 样品借出
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @return {"status":0,"msg":"[Flow][borrowApply] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/borrowApply
      * @remark 1.样品申请人->课长; 2.返回状态1代表失败
@@ -99,7 +99,7 @@ class Flow extends Common {
      * @title 样品借出(课长)
      * @description 样品借出(课长)
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
      * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSection] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/replyBorrowApplyFromSection
@@ -223,7 +223,7 @@ class Flow extends Common {
      * @title 样品分配
      * @description 样品分配
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
      * @param predictDate 必选 date 预计归还时间
      * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSample] success","data":[]}
@@ -368,7 +368,7 @@ class Flow extends Common {
      * @title 样品归还
      * @description 样品归还
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @return {"status":0,"msg":"[Flow][returnSample] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/returnSample
      * @remark 1.样品管理员->归还; 2.返回状态1代表失败
@@ -458,7 +458,7 @@ class Flow extends Common {
      * @title 样品删除
      * @description 样品删除
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @return {"status":0,"msg":"[Flow][deleteApply] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/deleteApply
      * @remark 1.样品管理员(删除申请)->课长; 2.返回状态1代表失败
@@ -538,7 +538,7 @@ class Flow extends Common {
      * @title 样品删除(课长)
      * @description 样品删除(课长)
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
      * @return {"status":0,"msg":"[Flow][replyDeleteApplyFromSection] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/replyDeleteApplyFromSection
@@ -656,7 +656,7 @@ class Flow extends Common {
      * @title 样品报废
      * @description 样品报废
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @return {"status":0,"msg":"[Flow][scrapApply] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/scrapApply
      * @remark 1.样品管理员(报废申请)->样品审核员; 2.返回状态1代表失败
@@ -736,7 +736,7 @@ class Flow extends Common {
      * @title 样品报废(审核员)
      * @description 样品报废(审核员)
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
      * @return {"status":0,"msg":"[Flow][replyScrapApplyFromSample] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/replyScrapApplyFromSample
@@ -856,7 +856,7 @@ class Flow extends Common {
      * @title 样品借出
      * @description 样品借出
      * @method get
-     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=[]
      * @return {"status":0,"msg":"[Flow][cancelBorrow] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/cancelBorrow
      * @remark 无
@@ -895,7 +895,51 @@ class Flow extends Common {
 
         }
     }
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/取消
+     * @title 样品删除/报废
+     * @description 样品删除/报废
+     * @method get
+     * @param fixed_nos 必选 string fixed_nos=[]
+     * @return {"status":0,"msg":"[Flow][cancelDeleteScrap] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/cancelDeleteScrap
+     * @remark 删除/报废更新的是相同的字段
+     */
+    public function cancelDeleteScrap() {
+        try {
+            // 前端需要把数组变成字符串
+            $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
 
+            for ($i = 0; $i < count($fixed_nos); $i++) {
+
+                $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                    ->whereIn('model_status', [DELETE_REVIEW, SCRAP_REVIEW])->find();
+                if (!empty($query)) {
+                    // 更新状态
+                    $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                        ->whereIn('model_status', [DELETE_REVIEW, SCRAP_REVIEW])
+                        ->update([
+                            'model_status'    => IN_STORE,
+                            'scrap_operator'      => null,
+                            'scrap_date' => null,
+                        ]);
+
+                    // 更新不成功
+                    if (1 != $res) {
+                        Log::record('[Flow][cancelDeleteScrap] update fail ' . $fixed_nos[$i]);
+                        return apiResponse(ERROR, 'server error');
+                    }
+                }
+            }
+            return apiResponse(SUCCESS, '[Flow][cancelDeleteScrap] success');
+
+        } catch (Exception $e) {
+            Log::record('[Flow][cancelDeleteScrap] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+
+        }
+    }
 
     private function getSectionAddress($section) {
         $address = array();
