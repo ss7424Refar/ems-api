@@ -201,7 +201,6 @@ function itemChange($list) {
         $list[$key]['department'] = $departArray[$row['department']];
         $list[$key]['section_manager'] = $sectionArray[$row['section_manager']];
     }
-
     return $list;
 }
 

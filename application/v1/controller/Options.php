@@ -67,6 +67,7 @@ class Options extends Common {
      * @description 根据部门下拉框内容联动课
      * @method post
      * @url http://domain/ems-api/v1/Options/getLinks
+     * @param depart 必选 int 课的value
      * @return {"status":0,"msg":"[Options][getLinks] success","data":{"1884":"SCD","2271":"SWV","2272":"PSD","2274":"FWD","491":"CSV","540":"SSD"}}
      * @return_param status int 状态码
      * @return_param msg string 状态码说明

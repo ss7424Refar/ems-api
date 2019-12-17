@@ -106,6 +106,8 @@ class Flow extends Common {
      * @remark 1.课长->同意/拒绝; 2.返回状态1代表失败
      */
     public function replyBorrowApplyFromSection() {
+
+
         try {
             $userId = $this->loginUser['ems'];
 
@@ -848,10 +850,50 @@ class Flow extends Common {
         }
         return apiResponse(ERROR, 'server error');
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/流程相关/取消
+     * @title 样品借出
+     * @description 样品借出
+     * @method get
+     * @param fixed_nos 必选 数组 fixed_nos=[]
+     * @return {"status":0,"msg":"[Flow][cancelBorrow] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/cancelBorrow
+     * @remark 无
+     */
     public function cancelBorrow() {
+        try {
+            // 前端需要把数组变成字符串
+            $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
 
+            for ($i = 0; $i < count($fixed_nos); $i++) {
 
+                $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                    ->where('model_status', BORROW_REVIEW)->find();
+                if (!empty($query)) {
+                    // 更新状态
+                    $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
+                        ->where('model_status', BORROW_REVIEW)
+                        ->update([
+                            'user_name'    => null,
+                            'user_id'      => null,
+                            'model_status' => IN_STORE
+                        ]);
+
+                    // 更新不成功
+                    if (1 != $res) {
+                        Log::record('[Flow][cancelBorrow] update fail ' . $fixed_nos[$i]);
+                        return apiResponse(ERROR, 'server error');
+                    }
+                }
+            }
+            return apiResponse(SUCCESS, '[Flow][cancelBorrow] success');
+
+        } catch (Exception $e) {
+            Log::record('[Flow][cancelBorrow] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+
+        }
     }
 
 

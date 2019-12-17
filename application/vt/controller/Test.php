@@ -116,32 +116,36 @@ class Test extends Controller {
 //            $address[] = $value['MAIL'];
 //        }
 //        dump($address);
-        $allData = Db::table('ems_main_engine')->where('model_status', USING)
-            ->order('fixed_no desc')->select();
-
-
-        $allData = itemChange($allData);
-        $column = getColumns('field');
-
-        $search = $this->request->param('search');
-
-        if (null != $search) {
-            foreach ($allData as $key => $row) {
-                $rowExist = false;
-                foreach ($column as $value) {
-                    // 包含
-                    if (stristr($row[$value], $search) !== false) {
-                        $rowExist = true;
-                        break;
-                    }
-
-                }
-                // 不存在的话删除
-                if (!$rowExist) {
-                    unset($allData[$key]);
-                }
-            }
-        }
-        dump(array_slice($allData, 0, 6));
+//        $allData = Db::table('ems_main_engine')->where('model_status', USING)
+//            ->order('fixed_no desc')->select();
+//
+//
+//        $allData = itemChange($allData);
+//        $column = getColumns('field');
+//
+//        $search = $this->request->param('search');
+//
+//        if (null != $search) {
+//            foreach ($allData as $key => $row) {
+//                $rowExist = false;
+//                foreach ($column as $value) {
+//                    // 包含
+//                    if (stristr($row[$value], $search) !== false) {
+//                        $rowExist = true;
+//                        break;
+//                    }
+//
+//                }
+//                // 不存在的话删除
+//                if (!$rowExist) {
+//                    unset($allData[$key]);
+//                }
+//            }
+//        }
+//        dump(array_slice($allData, 0, 6));
+        $data['model_status'] = '使用中';
+        $status = json_decode(STATUS);
+        $data['model_status'] = array_search($data['model_status'], $status);
+        dump($data['model_status']);
     }
 }
