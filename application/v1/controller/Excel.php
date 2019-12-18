@@ -12,6 +12,8 @@ use think\Db;
 use think\Exception;
 use think\Log;
 
+use \PhpOffice\PhpSpreadsheet\IOFactory;
+
 class Excel extends Common{
     /**
      * showdoc
@@ -22,7 +24,7 @@ class Excel extends Common{
      * @param formData 必选 json formData:{}
      * @return 无
      * @url http://domain/ems-api/v1/Excel/export
-     * @remark `别问， 问就是尽力导成了csv;例子: let formData = JSON.stringify(this.form)； window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?formData={}`
+     * @remark `别问, 问就是尽力导成了csv; 例子: let formData = JSON.stringify(this.form); window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?formData={}`
      */
     public function export() {
         set_time_limit(0);
@@ -88,4 +90,39 @@ class Excel extends Common{
             return apiResponse(ERROR, 'server error');
         }
     }
+
+    public function import() {
+
+        $excel = request()->file('excel')->getInfo();
+        $subject = $this->request->param('subject');
+
+        try {
+            $objReader = IOFactory::createReader('Xlsx');
+            $objPHPExcel = $objReader->load($excel['tmp_name']);
+
+            $importArr = $objPHPExcel->getSheetByName('template')->toArray();
+            $linkArr = $objPHPExcel->getSheetByName('links')->toArray();
+
+            if (count($importArr) <= 2) {
+                return apiResponse(SUCCESS, '你需要填写至少一行的样品信息');
+            }
+
+            // 判断是否有重复
+            $duplicateArray = array();
+            foreach ($importArr as $key => $item) {
+                if ($key >= 2) {
+                    $res = Db::table('ems_main_engine')->where('fixed_no', $item[0])->find();
+
+                    //
+
+                }
+
+            }
+
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
+            Log::record('[Excel][import] error' . $e->getMessage());
+        }
+
+    }
+
 }

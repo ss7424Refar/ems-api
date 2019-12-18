@@ -52,4 +52,6 @@ define('COMMON_USER', 16); // 可能没什么用, 先放着
 // ems url
 define('EMS_URL', 'http://172.30.52.43/ems/');
 
-
+// email type
+define('FLOW', 'flow');
+define('IMPORT', 'import');

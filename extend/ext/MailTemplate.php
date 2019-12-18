@@ -125,40 +125,82 @@ class MailTemplate {
                 '</html>';
     }
 
+    public static function getImportContent($mainBody, $tables) {
+
+        return '<html charset="utf-8">'.
+                '    <head>'.
+                        self::getCSSStyle().
+                '    </head>'.
+                '    <body>'.
+                        $mainBody.
+                        self::getTableData($tables).
+                        self::getFooter().
+                '    </body>'.
+                '</html>';
+    }
+
 
     private static function getTableData($json) {
-        $tables = '';
         $tab = json_decode($json, true);
 
-        $tableHeader = '<tr>'.
-                        '  <th>样品编号</th>'.
-                        '  <th>样品名称</th>'.
-                        '  <th>备注</th>'.
-                        '</tr>';
+        $tables = '<tr>'.
+                    '  <th>样品编号</th>'.
+                    '  <th>样品名称</th>'.
+                    '  <th>备注</th>'.
+                  '</tr>';
         for($i = 0; $i < count($tab); $i++) {
             if ($i % 2 == 0) {
-                $tables = $tableHeader.
-                            '<tr class="alt">'.
-                            '	 <td>'. $tab[$i]['id'] .'</td>'.
-                            '	 <td>'. $tab[$i]['name'] .'</td>'.
-                            '	 <td>'. $tab[$i]['desc'] .'</td>'.
-                            '</tr>';
+                $tables = $tables.'<tr class="alt">';
             } else {
-                $tables = $tableHeader.
-                            '<tr class="alt">'.
-                            '	 <td>'. $tab[$i]['id'] .'</td>'.
-                            '	 <td>'. $tab[$i]['name'] .'</td>'.
-                            '	 <td>'. $tab[$i]['desc'] .'</td>'.
-                            '</tr>';
+                $tables = $tables.'<tr class="">';
             }
-
+            $tables = $tables.
+                '	 <td>'. $tab[$i]['id'] .'</td>'.
+                '	 <td>'. $tab[$i]['name'] .'</td>'.
+                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+            '</tr>';
         }
 
         return  '<table id="customers">' .
                     $tables.
                 '</table>';
+    }
+
+    private static function getImportTableData($json) {
+        $tables = '';
+        $tab = json_decode($json, true);
+
+        $tableHeader = '<tr>'.
+            '  <th>样品名称</th>'.
+            '  <th>样品编号</th>'.
+            '  <th>序列号</th>'.
+            '  <th>型号</th>'.
+            '  <th>备注</th>'.
+            '  <th>课</th>'.
+            '  <th>负责人</th>'.
+            '</tr>';
+        for($i = 0; $i < count($tab); $i++) {
+            if ($i % 2 == 0) {
+                $tables = $tables.'<tr class="alt">';
+            } else {
+                $tables = $tables.'<tr class="">';
+            }
+            $tables = $tables.
+                '	 <td>'. $tab[$i]['id'] .'</td>'.
+                '	 <td>'. $tab[$i]['name'] .'</td>'.
+                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+                '</tr>';
+        }
+
+        return  '<table id="customers">' .
+            $tables.
+            '</table>';
 
     }
+
     private static function getFooter() {
         return
             '<p style="margin-top: 10px">点击<a style="font-size:12px;" href="'.EMS_URL .'">此链接</a>确认详情</p>';

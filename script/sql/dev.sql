@@ -39,6 +39,7 @@ DROP TABLE IF EXISTS `ems_mail_queue`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ems_mail_queue` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(5) DEFAULT NULL,
   `main_body` text,
   `subject` text,
   `from` text,

@@ -61,7 +61,10 @@ function getSearchCondition($formData) {
         if (!empty($formData->location)) {
             $map['location'] = $formData->location;
         }
-        if (null != $formData->status) {
+        // 是0不是null
+        if (isset($formData->status) == true && IN_STORE == $formData->status) {
+            $map['model_status'] = $formData->status;
+        } elseif (null != $formData->status) {
             $map['model_status'] = $formData->status;
         }
         if (!empty($formData->depart)) {

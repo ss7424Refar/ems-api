@@ -64,7 +64,7 @@ class Machine extends Common {
             } else {
                 // 先查询ems_borrow_history
                 $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
-                            ->where('user_name', $map['historyUser'])->buildSql();
+                            ->where('user_name', $map['historyUser'][0], $map['historyUser'][1])->buildSql();
 
                 // 移除数组
                 unset($map['historyUser']);

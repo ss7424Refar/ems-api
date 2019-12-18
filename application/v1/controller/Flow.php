@@ -79,7 +79,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getBorrowApply($section, $user);
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                              'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($value)];
                     Db::table('ems_mail_queue')->insert($data);
                 }
@@ -155,7 +155,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSection();
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
 
                     $res = Db::table('ems_mail_queue')->insert($data);
@@ -202,7 +202,7 @@ class Flow extends Common {
                         $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSection($to['USER_NAME']);
 
                         // 插入数据
-                        $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                        $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                                 'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
                                 'table_data' => json_encode($value)];
 
@@ -299,7 +299,7 @@ class Flow extends Common {
                        $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSample($to['USER_NAME']);
 
                        // 插入数据
-                       $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                       $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                            'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])),
                            'table_data' => json_encode($value)];
 
@@ -346,7 +346,7 @@ class Flow extends Common {
                        $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSample($to['USER_NAME']);
 
                        // 插入数据
-                       $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                       $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                            'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
                            'table_data' => json_encode($value)];
 
@@ -437,7 +437,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getReturnSample($to['USER_NAME']);
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
                         'table_data' => json_encode($value)];
 
@@ -517,7 +517,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getDeleteApply($section, $user);
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($value)];
                     Db::table('ems_mail_queue')->insert($data);
                 }
@@ -586,7 +586,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getDeleteApproveFromSection();
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
 
                     $res = Db::table('ems_mail_queue')->insert($data);
@@ -633,7 +633,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getDeleteRejectFromSection();
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
 
                     $res = Db::table('ems_mail_queue')->insert($data);
@@ -714,7 +714,7 @@ class Flow extends Common {
                 $mainBody = MailTemplate::getScrapApply();
 
                 // 插入数据
-                $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                     'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
 
                 Db::table('ems_mail_queue')->insert($data);
@@ -788,7 +788,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getScrapApproveFromSample();
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), // 定时任务判断是数组
                         'table_data' => json_encode($inputData)];
 
@@ -835,7 +835,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getScrapRejectFromSample();
 
                     // 插入数据
-                    $data = ['id'=>null, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), // 定时任务判断是数组
                         'table_data' => json_encode($inputData)];
 
@@ -856,7 +856,7 @@ class Flow extends Common {
      * @title 样品借出
      * @description 样品借出
      * @method get
-     * @param fixed_nos 必选 string fixed_nos=[]
+     * @param fixed_nos 必选 string fixed_nos=""
      * @return {"status":0,"msg":"[Flow][cancelBorrow] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/cancelBorrow
      * @remark 无
@@ -864,27 +864,24 @@ class Flow extends Common {
     public function cancelBorrow() {
         try {
             // 前端需要把数组变成字符串
-            $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
+            $fixed_nos = $this->request->param('fixed_nos');// 转为数组
 
-            for ($i = 0; $i < count($fixed_nos); $i++) {
+            $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos)
+                ->where('model_status', BORROW_REVIEW)->find();
+            if (!empty($query)) {
+                // 更新状态
+                $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos)
+                    ->where('model_status', BORROW_REVIEW)
+                    ->update([
+                        'user_name'    => null,
+                        'user_id'      => null,
+                        'model_status' => IN_STORE
+                    ]);
 
-                $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
-                    ->where('model_status', BORROW_REVIEW)->find();
-                if (!empty($query)) {
-                    // 更新状态
-                    $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
-                        ->where('model_status', BORROW_REVIEW)
-                        ->update([
-                            'user_name'    => null,
-                            'user_id'      => null,
-                            'model_status' => IN_STORE
-                        ]);
-
-                    // 更新不成功
-                    if (1 != $res) {
-                        Log::record('[Flow][cancelBorrow] update fail ' . $fixed_nos[$i]);
-                        return apiResponse(ERROR, 'server error');
-                    }
+                // 更新不成功
+                if (1 != $res) {
+                    Log::record('[Flow][cancelBorrow] update fail ' . $fixed_nos);
+                    return apiResponse(ERROR, 'server error');
                 }
             }
             return apiResponse(SUCCESS, '[Flow][cancelBorrow] success');

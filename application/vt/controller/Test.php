@@ -143,9 +143,16 @@ class Test extends Controller {
 //            }
 //        }
 //        dump(array_slice($allData, 0, 6));
-        $data['model_status'] = '使用中';
-        $status = json_decode(STATUS);
-        $data['model_status'] = array_search($data['model_status'], $status);
-        dump($data['model_status']);
+//        $data['model_status'] = '使用中';
+//        $status = json_decode(STATUS);
+//        $data['model_status'] = array_search($data['model_status'], $status);
+//        dump($data['model_status']);
+
+        $formData = '{"status":null}';
+        $formData = json_decode($formData);
+
+        if (null != $formData->status) {
+            dump('hello');
+        }
     }
 }
