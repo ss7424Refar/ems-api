@@ -111,6 +111,13 @@ class MailTemplate {
 
     }
 
+    public static function getImportNotice() {
+        return
+            '<p>Dear All</p>'.
+            '<p>如下样机审批拒绝, 请登录样品管理系统确认, 谢谢!</p>';
+
+    }
+
     public static function getContent($mainBody, $tables) {
 
         return '<html charset="utf-8">'.
