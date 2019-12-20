@@ -72,7 +72,6 @@ class Excel extends Common{
                         ->order('instore_date desc')
                         ->select();
             }
-
             $list = itemChange($list);
             // 生成csv
             foreach ($list as $row) {
@@ -173,6 +172,9 @@ class Excel extends Common{
                 // 状态转换
                 $keySt = array_search($data['model_status'], $statusArray);
                 $data['model_status'] = $keySt; // 不是很需要转换, 0为假; 1以后为真
+                $data['instore_operator'] = $this->loginUser['ems'];
+                $data['instore_date'] = Db::raw('now()'); // 入库时间
+
                 try{
                     $result = Db::table('ems_main_engine')->insert($data);
 

@@ -47,3 +47,5 @@ CREATE TABLE `ems_mail_queue` (
   `table_data` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+

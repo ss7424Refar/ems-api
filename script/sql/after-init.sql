@@ -155,3 +155,5 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `GETFIXEDNO`() RETURNS varchar(20) CH
     RETURN Code2;
   END ;;
 
+-- 删除样品表中model_status的垃圾数据, 否则全量导出的时候会失败
+delete FROM `ems_main_engine` WHERE  `model_status` = '';
