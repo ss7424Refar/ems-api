@@ -178,8 +178,8 @@ class MailTemplate {
         $tab = json_decode($json, true);
 
         $tables = '<tr>'.
-            '  <th>样品名称</th>'.
             '  <th>样品编号</th>'.
+            '  <th>样品名称</th>'.
             '  <th>序列号</th>'.
             '  <th>型号</th>'.
             '  <th>备注</th>'.

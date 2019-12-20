@@ -110,48 +110,35 @@ class Excel extends Common{
         $excel = request()->file('excel')->getInfo();
         $subject = $this->request->param('subject');
 
+        // 导入数据
+        $importArr = [];
+        // link sheet
+        $linkArr = [];
+        // 转换后的links
+        $_linkArr = [];
+        // 返回结果
+        $jsonResult = [];
+
         try {
             $objReader = IOFactory::createReader('Xlsx');
+            $objReader->setReadDataOnly(TRUE);
 //            $objReader = IOFactory::createReader('Xls');
             $objPHPExcel = $objReader->load($excel['tmp_name']);
 
             $importArr = $objPHPExcel->getSheetByName('template')->toArray();
             $linkArr = $objPHPExcel->getSheetByName('links')->toArray();
 
-            // 转换下linkArr
-            $_linkArr = [];
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
+            Log::record('[Excel][import] read error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+
+        try {
             foreach ($linkArr as $item) {
                 $_linkArr[$item[0]] = $item[1];
             }
-
-            // 返回结果
-            $jsonResult = [];
-
             if (count($importArr) <= 2) {
                 return apiResponse(SUCCESS, '你需要填写至少一行的样品信息');
-            }
-
-            // 判断是否有重复
-            $duplicateArray = array();
-            foreach ($importArr as $key => $item) {
-                if ($key >= 2) {
-                    $res = null;
-                    try {
-                        $res = Db::table('ems_main_engine')->where('fixed_no', $item[0])->find();
-                    } catch (Exception $e) {
-                        Log::record('[Excel][import] duplicate error' . $e->getMessage());
-                        return apiResponse(ERROR, 'server error');
-                    }
-                    if (null != $res) {
-                        $duplicateArray[] = $item[0];
-                    }
-                }
-            }
-
-            if (!empty($duplicateArray)) {
-                $jsonResult['duplicate'] = $duplicateArray;
-                $jsonResult['error'] = null;
-                return apiResponse(SUCCESS, '重复数据如下, 需要重写填写', $jsonResult);
             }
 
             // 插入数据 判断成功与否
@@ -160,8 +147,8 @@ class Excel extends Common{
             $errorArray = [];
             // 定义键名
             $key = array('fixed_no', 'MODEL_NAME', 'SERIAL_NO', 'type', 'department', 'section_manager',
-                        'model_status', 'invoice_no', 'serial_number', 'CPU', 'screen_size', 'MEMORY',
-                        'HDD', 'cd_rom', 'location', 'remark');
+                'model_status', 'invoice_no', 'serial_number', 'CPU', 'screen_size', 'MEMORY',
+                'HDD', 'cd_rom', 'location', 'remark');
 
             $statusArray = json_decode(STATUS, true);
             $departArray = json_decode(DEPART, true);
@@ -170,7 +157,7 @@ class Excel extends Common{
             // 还是用index来循环比较好.
             for ($i = 2; $i < count($importArr); $i++) {
                 $data = array();
-                for ($j = 0; $j < count($importArr[$i]); $j++) {
+                for ($j = 0; $j < count($key); $j++) {
                     $data[$key[$j]] = $importArr[$i][$j];
                 }
                 // 课转换
@@ -217,7 +204,6 @@ class Excel extends Common{
                     }
                 }
 
-                $jsonResult['duplicate'] = null;
                 $jsonResult['error'] = $errorArray;
                 return apiResponse(SUCCESS, '错误数据如下, 需要重写填写', $jsonResult);
             }
@@ -227,7 +213,7 @@ class Excel extends Common{
                 $json = array();
                 // 存储邮件表格内容, 需要拿到各个课的负责人, 所以这里再循环一次
                 foreach ($importArr as $key => $item) {
-                     $tmp = null;
+                    $tmp = null;
                     if ($key >= 2) {
                         $tmp['id'] = $item[0];
                         $tmp['name'] = $item[1];
@@ -252,9 +238,9 @@ class Excel extends Common{
 
                 return apiResponse(SUCCESS, '插入数据成功');
             }
-
-        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
+        } catch (Exception $e) {
             Log::record('[Excel][import] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
         }
 
     }
