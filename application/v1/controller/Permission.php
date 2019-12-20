@@ -108,8 +108,7 @@ class Permission extends Common {
             $jsonResult = array();
 
             // 先查询user_name
-            $usr = Db::table('ems_user')->where('USER_ID', $userInfo['ems'])
-                ->where('IS_DELETED', 0)->find();
+            $usr = $this->getUserInfoById($userInfo['ems']);
 
             for ($i = 0; $i < count($res); $i++) {
                 $desc = $res[$i]['description'];

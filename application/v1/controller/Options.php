@@ -79,7 +79,7 @@ class Options extends Common {
         $links = json_decode(LINKS, true);
 
         if (array_key_exists($depart, $links)) {
-            return apiResponse(SUCCESS, '[Options][getLinks] success', $links[$depart]);
+            return apiResponse(SUCCESS, '[Options][getLinks] success', $this->getKeyValue($links[$depart]));
         }
     }
     private function getKeyValue($arr) {

@@ -981,15 +981,4 @@ class Flow extends Common {
         }
     }
 
-    private function getUserInfoById($userId) {
-
-        try {
-            $user = Db::table('ems_user')->where('user_id', $userId)->where('IS_DELETED', 0)
-                ->find();
-            return $user;
-        } catch (Exception $e) {
-            Log::record('[Flow][getUserInfoById] error' . $e->getMessage());
-            return apiResponse(ERROR, 'server error');
-        }
-    }
 }

@@ -29,8 +29,13 @@ class MailMan {
                 ->order('id')->select();
 
             foreach ($res as $key => $item) {
-                $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
+                if (FLOW == $item['type']) {
+                    $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
+                } else {
+                    $content = MailTemplate::getImportContent($item['main_body'], $item['table_data']);
+                }
 
+                Log::record($content);
                 $r = self::send($item['from'], json_decode($item['to'], true), config('mail_cc'),
                     $item['subject'], $content);
 
@@ -62,7 +67,7 @@ class MailMan {
         // Create a message
         $message = Swift_Message::newInstance($mailTitle)
             ->setFrom(array($from))
-            ->setTo($to)
+            ->setTo($to) // 这里也是需要数组的
             ->setCc(json_decode($cc, true))
             ->setBody($content, 'text/html', 'utf-8');
 

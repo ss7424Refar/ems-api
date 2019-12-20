@@ -13,6 +13,10 @@ use think\Session;
 use think\Response;
 use think\exception\HttpResponseException;
 
+use think\Log;
+use think\Exception;
+use think\Db;
+
 class Common extends Controller {
 
     //登录用户
@@ -41,4 +45,16 @@ class Common extends Controller {
 
     }
 
+    // 可能每个继承类都需要查询userInfo
+    protected function getUserInfoById($userId) {
+
+        try {
+            $user = Db::table('ems_user')->where('user_id', $userId)->where('IS_DELETED', 0)
+                ->find();
+            return $user;
+        } catch (Exception $e) {
+            Log::record('[Common][getUserInfoById] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+    }
 }

@@ -20,8 +20,8 @@ class Excel extends Common{
     /**
      * showdoc
      * @catalog 接口文档/EXCEL相关
-     * @title EXCEL导出接口
-     * @description EXCEL导出接口
+     * @title EXCEL导出
+     * @description EXCEL导出
      * @method get
      * @param formData 必选 json formData:{}
      * @return 无
@@ -93,19 +93,38 @@ class Excel extends Common{
         }
     }
 
+    /**
+     * showdoc
+     * @catalog 接口文档/EXCEL相关
+     * @title EXCEL导入
+     * @description EXCEL导入
+     * @method post
+     * @param excel 必选 file 文件(xlsx)
+     * @param subject 必选 string 邮件标题
+     * @return 参考导入返回内容说明
+     * @url http://domain/ems-api/v1/Excel/import
+     * @remark 1. 需要post请求; 2. Content-Type=multipart/form-data
+     */
     public function import() {
 
         $excel = request()->file('excel')->getInfo();
         $subject = $this->request->param('subject');
 
         try {
-//            $objReader = IOFactory::createReader('Xlsx');
-            $objReader = IOFactory::createReader('Xls');
+            $objReader = IOFactory::createReader('Xlsx');
+//            $objReader = IOFactory::createReader('Xls');
             $objPHPExcel = $objReader->load($excel['tmp_name']);
 
             $importArr = $objPHPExcel->getSheetByName('template')->toArray();
             $linkArr = $objPHPExcel->getSheetByName('links')->toArray();
 
+            // 转换下linkArr
+            $_linkArr = [];
+            foreach ($linkArr as $item) {
+                $_linkArr[$item[0]] = $item[1];
+            }
+
+            // 返回结果
             $jsonResult = [];
 
             if (count($importArr) <= 2) {
@@ -198,8 +217,6 @@ class Excel extends Common{
                     }
                 }
 
-//                $errorArray['listId'] = $errorList;
-
                 $jsonResult['duplicate'] = null;
                 $jsonResult['error'] = $errorArray;
                 return apiResponse(SUCCESS, '错误数据如下, 需要重写填写', $jsonResult);
@@ -207,15 +224,31 @@ class Excel extends Common{
 
             // 全部数据插入成功
             if ((count($importArr) - 2) == count($successList)) {
+                $json = array();
+                // 存储邮件表格内容, 需要拿到各个课的负责人, 所以这里再循环一次
+                foreach ($importArr as $key => $item) {
+                     $tmp = null;
+                    if ($key >= 2) {
+                        $tmp['id'] = $item[0];
+                        $tmp['name'] = $item[1];
+                        $tmp['sn'] = $item[2];
+                        $tmp['pn'] = $item[3];
+                        $tmp['section'] = $item[5];
+                        $tmp['remark'] = $item[15];
+                        $tmp['charge'] = $_linkArr[$item[5]];
+                        $json[] = $tmp;
+                    }
+                }
 
                 // 插入到邮件表中
-                $to = [];
-
                 $mainBody = MailTemplate::getImportNotice();
 
+                $usr = $this->getUserInfoById($this->loginUser['ems']);
                 // 插入数据
                 $data = ['id'=>null, 'type'=>IMPORT, 'main_body'=>$mainBody, 'subject'=>$subject,
-                    'from'=>['MAIL'], 'to'=>json_encode($to), 'table_data' => json_encode()];
+                    'from'=>$usr['MAIL'], 'to'=>config('mail_import_to'), 'table_data' => json_encode($json)];
+
+                Db::table('ems_mail_queue')->insert($data);
 
                 return apiResponse(SUCCESS, '插入数据成功');
             }
@@ -225,10 +258,19 @@ class Excel extends Common{
         }
 
     }
-
+    /**
+     * showdoc
+     * @catalog 接口文档/EXCEL相关
+     * @title EXCEL导入模板下载
+     * @description EXCEL导入模板下载
+     * @method get
+     * @return 无
+     * @url http://domain/ems-api/v1/Excel/download
+     * @remark 1. window.location.href=
+     */
     public function download() {
 
-        $fileName = "入库信息导入表.xls";
+        $fileName = "入库信息导入表.xlsx";
         $file = ROOT_PATH . 'public' . DS . 'download' . DS . $fileName;
 
         // 打开文件
@@ -243,6 +285,5 @@ class Excel extends Common{
 
         echo fread($f, filesize($file));
         fclose($f);
-        exit();
     }
 }

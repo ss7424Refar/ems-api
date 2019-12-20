@@ -114,8 +114,8 @@ class MailTemplate {
     public static function getImportNotice() {
         return
             '<p>Dear All</p>'.
-            '<p>如下样机审批拒绝, 请登录样品管理系统确认, 谢谢!</p>';
-
+            '<p>大家好, 以下样品已入库, 如果有需要可通过申请再来领取</p>'.
+            '<p>点击<a style="font-size:12px;" href="'.EMS_URL .'">此链接</a>确认详情</p>';
     }
 
     public static function getContent($mainBody, $tables) {
@@ -140,8 +140,8 @@ class MailTemplate {
                 '    </head>'.
                 '    <body>'.
                         $mainBody.
-                        self::getTableData($tables).
-                        self::getFooter().
+                        self::getImportTableData($tables).
+//                        self::getFooter().
                 '    </body>'.
                 '</html>';
     }
@@ -177,7 +177,7 @@ class MailTemplate {
         $tables = '';
         $tab = json_decode($json, true);
 
-        $tableHeader = '<tr>'.
+        $tables = '<tr>'.
             '  <th>样品名称</th>'.
             '  <th>样品编号</th>'.
             '  <th>序列号</th>'.
@@ -195,10 +195,11 @@ class MailTemplate {
             $tables = $tables.
                 '	 <td>'. $tab[$i]['id'] .'</td>'.
                 '	 <td>'. $tab[$i]['name'] .'</td>'.
-                '	 <td>'. $tab[$i]['desc'] .'</td>'.
-                '	 <td>'. $tab[$i]['desc'] .'</td>'.
-                '	 <td>'. $tab[$i]['desc'] .'</td>'.
-                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+                '	 <td>'. $tab[$i]['sn'] .'</td>'.
+                '	 <td>'. $tab[$i]['pn'] .'</td>'.
+                '	 <td>'. $tab[$i]['remark'] .'</td>'.
+                '	 <td>'. $tab[$i]['section'] .'</td>'.
+                '	 <td>'. $tab[$i]['charge'] .'</td>'.
                 '</tr>';
         }
 

@@ -292,6 +292,10 @@ return [
     'mail_from'         => 'ems_swv@dbh.dynabook.com',
     'mail_cc'           => '["lin.zhu@dbh.dynabook.com", "bin.yan@dbh.dynabook.com"]',
 
+
+    'mail_import_cc'           => '["Design_SWT@dbh.dynabook.com", "Design_DT@dbh.dynabook.com"]',
+    'mail_import_to'           => '["yuanjin.chen@dbh.dynabook.com", "Daoqi.Zhang@dbh.dynabook.com", "jianzhong.yu@dbh.dynabook.com"]',
+
     // +----------------------------------------------------------------------
     // | 自定义变量
     // +----------------------------------------------------------------------
