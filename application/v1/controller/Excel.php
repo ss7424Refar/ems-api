@@ -146,8 +146,8 @@ class Excel extends Common{
             $errorArray = [];
             // 定义键名
             $key = array('fixed_no', 'MODEL_NAME', 'SERIAL_NO', 'type', 'department', 'section_manager',
-                'model_status', 'invoice_no', 'serial_number', 'CPU', 'screen_size', 'MEMORY',
-                'HDD', 'cd_rom', 'location', 'remark');
+                'model_status', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
+                'screen_size', 'MEMORY', 'HDD', 'cd_rom', 'location', 'remark');
 
             $statusArray = json_decode(STATUS, true);
             $departArray = json_decode(DEPART, true);
@@ -222,7 +222,7 @@ class Excel extends Common{
                         $tmp['sn'] = $item[2];
                         $tmp['pn'] = $item[3];
                         $tmp['section'] = $item[5];
-                        $tmp['remark'] = $item[15];
+                        $tmp['remark'] = $item[17];
                         $tmp['charge'] = $_linkArr[$item[5]];
                         $json[] = $tmp;
                     }

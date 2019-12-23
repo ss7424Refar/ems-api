@@ -53,9 +53,5 @@
 ### history 表
 - [confirm_operator_id] [confirm_operator_name] 没啥卵用, 虽然劳资也插入了
 
-### left
-0. api doc
-1. 机子借出取消申请
-2. 删除、报废(取消申请)
-3. 导入
-4. backend server page
+### mysql double 类型
+- 样机表中的double类型没有指定精度, 所以就按照实际的精度来显示. 如400.123, 插入db也是为400.123
