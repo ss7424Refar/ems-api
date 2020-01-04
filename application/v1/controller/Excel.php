@@ -23,7 +23,8 @@ class Excel extends Common{
      * @title EXCEL导出
      * @description EXCEL导出
      * @method get
-     * @param formData 必选 json formData:{}
+     * @param formData 单选 json formData:{}(checkbox没有勾选)
+     * @param fixed_nos 单选 string fixed_nos:[]
      * @return 无
      * @url http://domain/ems-api/v1/Excel/export
      * @remark `别问, 问就是尽力导成了csv; 例子: let formData = JSON.stringify(this.form); window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?formData={}`
@@ -34,6 +35,8 @@ class Excel extends Common{
 
         $formData = $this->request->param('formData');
         $map = getSearchCondition($formData);
+
+        $fixed_nos = $this->request->param('fixed_nos'); // checkedList
 
         try {
             // 列名
@@ -55,22 +58,26 @@ class Excel extends Common{
             fputcsv($fp, $column);
 
             // 查询list
-            if (empty($map['historyUser'])) {
-                $list = Db::table('ems_main_engine')->where($map)->order('instore_date desc')->select();
+            if ($fixed_nos) {
+                $list = Db::table('ems_main_engine')->whereIn('fixed_no', json_decode($fixed_nos))->select();
             } else {
-                // 先查询ems_borrow_history
-                $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
-                            ->where('user_name', $map['historyUser'])->buildSql();
+                if (empty($map['historyUser'])) {
+                    $list = Db::table('ems_main_engine')->where($map)->order('instore_date desc')->select();
+                } else {
+                    // 先查询ems_borrow_history
+                    $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
+                        ->where('user_name', $map['historyUser'])->buildSql();
 
-                // 移除数组
-                unset($map['historyUser']);
-                $sqlB = Db::table('ems_main_engine')->where($map)->buildSql();
+                    // 移除数组
+                    unset($map['historyUser']);
+                    $sqlB = Db::table('ems_main_engine')->where($map)->buildSql();
 
-                // 查询
-                $list = Db::table($sqlA . ' a')
+                    // 查询
+                    $list = Db::table($sqlA . ' a')
                         ->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')
                         ->order('instore_date desc')
                         ->select();
+                }
             }
             $list = itemChange($list);
             // 生成csv
