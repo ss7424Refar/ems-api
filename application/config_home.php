@@ -300,7 +300,5 @@ return [
     // +----------------------------------------------------------------------
 
     // 是否开启session
-    'session_debug'       => true,
-    // 调试用的现用户
-    'current_role_id'        => ADMIN
+    'session_debug'       => true
 ];

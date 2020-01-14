@@ -30,24 +30,7 @@ class Login extends Controller {
      */
     public function check(){
         if (config('session_debug')) {
-            if (ADMIN == config('current_role_id')) {
-                Session::set('loginUser', array('T'=>'admin', 'ems'=>'admin', 'roleId'=>ADMIN, 'section'=>'2271'));
-            } elseif (COMMON_USER == config('current_role_id')) {
-                Session::set('loginUser',
-                    array('T'=>'Huang Chunna', 'ems'=>'500357', 'roleId'=>COMMON_USER, 'section'=>'2271'));
-            } elseif (EMS_ADMIN == config('current_role_id')) {
-                Session::set('loginUser',
-                    array('T'=>'Lin Chong', 'ems'=>'q20099th', 'roleId'=>EMS_ADMIN, 'section'=>'2271'));
-            } elseif (EMS_AUDITOR == config('current_role_id')) {
-                Session::set('loginUser',
-                    array('T'=>'Han Guangri', 'ems'=>'p51213th', 'roleId'=>EMS_AUDITOR, 'section'=>'2271'));
-            } elseif (T_MANAGER == config('current_role_id')) {
-                Session::set('loginUser',
-                    array('T'=>'Wang Yan', 'ems'=>'p51215th', 'roleId'=>T_MANAGER, 'section'=>'2271'));
-            } elseif (S_MANAGER == config('current_role_id')) {
-                Session::set('loginUser',
-                    array('T'=>'Lu Yan', 'ems'=>'p90614th', 'roleId'=>S_MANAGER, 'section'=>'2271'));
-            }
+            Session::set('sampleLoginUser', array('T'=>'admin', 'ems'=>'admin', 'roleId'=>ADMIN, 'section'=>'2271'));
 
             return apiResponse(SUCCESS, 'access');
         } else {
@@ -77,13 +60,13 @@ class Login extends Controller {
                         } elseif (empty($ems_user['SECTION'])) {
                             return apiResponse(ERROR, 'ems invalid(no section)');
                         } else {
-                            Session::set('loginUser',
+                            Session::set('sampleLoginUser',
                                 array('T'=>$t_user['login'],
                                       'ems'=>$ems_user['USER_ID'],
                                       'roleId'=>$t_user['role_id'],
                                       'section'=>$ems_user['SECTION']));
 
-                            Log::record('hello! ['. $ems_user['USER_ID']. ' ] ' . $ems_user['USER_NAME']);
+                            Log::record('hello! ['. $ems_user['USER_ID']. '] ' . $ems_user['USER_NAME']);
 
                             return apiResponse(SUCCESS, 'access');
                         }

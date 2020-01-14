@@ -28,7 +28,7 @@ class Common extends Controller {
     }
 
     public function checkSession(){
-        if (null == Session::get('loginUser')){
+        if (null == Session::get('sampleLoginUser')){
             $type = $this->getResponseType(); // 获取当前的 response 输出类型
             $result = [
                 'status' => TIMEOUT,
@@ -41,7 +41,7 @@ class Common extends Controller {
             throw new HttpResponseException($response); // 构造方法可以用throw
         }
 
-        $this->loginUser = Session::get('loginUser');
+        $this->loginUser = Session::get('sampleLoginUser');
 
     }
 
