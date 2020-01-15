@@ -19,7 +19,7 @@ function getHttpHeader() {
     // 解决跨域通配符*与include报错
     $origin = Request::instance()->server('HTTP_ORIGIN');
     $header['Access-Control-Allow-Origin'] = $origin;
-    $header['Access-Control-Allow-Methods'] = '*';
+    $header['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, DELETE';
     $header['Access-Control-Allow-Headers'] = 'x-requested-with,content-type,multipart/form-data';
     // 携带cookie验证
     $header['Access-Control-Allow-Credentials'] = 'true'; // 一定要是字符串
@@ -95,9 +95,7 @@ function getFormArray($formData) {
         $formData = json_decode($formData);
 
         foreach ($formData as $key => $value) {
-            if (!empty($value)) {
-                $data[$key] = $value;
-            }
+            $data[$key] = $value;
         }
     }
 

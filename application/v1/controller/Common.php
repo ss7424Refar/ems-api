@@ -11,6 +11,7 @@ namespace app\v1\controller;
 use think\Controller;
 use think\Session;
 use think\Response;
+use think\Request;
 use think\exception\HttpResponseException;
 
 use think\Log;
@@ -24,7 +25,23 @@ class Common extends Controller {
 
     public function _initialize(){
         parent::_initialize();
+        $this->checkMethod();
         $this->checkSession();
+    }
+
+    public function checkMethod() {
+        // vue会发送预请求, option处理
+        if (Request::instance()->isOptions()) {
+            $type = $this->getResponseType();
+            $result = [
+                'status' => SUCCESS,
+                'msg'  => 'P.G.D', // permission get data
+                'data' => []
+            ];
+
+            $response = Response::create($result, $type)->header(getHttpHeader());
+            throw new HttpResponseException($response);
+        }
     }
 
     public function checkSession(){
