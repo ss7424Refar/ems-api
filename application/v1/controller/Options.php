@@ -8,6 +8,10 @@
 
 namespace app\v1\controller;
 
+use think\Db;
+use think\Exception;
+use think\Log;
+
 class Options extends Common {
     /**
      * showdoc
@@ -80,6 +84,36 @@ class Options extends Common {
 
         if (array_key_exists($depart, $links)) {
             return apiResponse(SUCCESS, '[Options][getLinks] success', $this->getKeyValue($links[$depart]));
+        }
+    }
+    /**
+     * showdoc
+     * @catalog 接口文档/下拉选项
+     * @title 下拉选项-区分下拉
+     * @description 区分下拉
+     * @method post
+     * @url http://domain/ems-api/v1/Options/getCategory
+     * @param 无
+     * @return {"status":0,"msg":"[Options][getCategory] success","data":[{"value":"Altair-UR","text":"Altair-UR"},{"value":"Altair-MR","text":"Altair-MR"},{"value":"Altair-MZ","text":"Altair-MZ"},{"value":"Altair-MX","text":"Altair-MX"}]}
+     * @return_param status int 状态码
+     * @return_param msg string 状态码说明
+     * @remark 返回0， 代表获取数据
+     */
+    public function getCategory() {
+        try {
+            $res = Db::table('ems_const')->field('name')->select();
+
+            $jsonResult = [];
+            foreach ($res as $value) {
+                $tmp = array();
+                $tmp['value'] = $value['name'];
+                $tmp['text'] = $value['name'];
+                array_push($jsonResult, $tmp);
+            }
+            return apiResponse(SUCCESS, '[Options][getCategory] success', $jsonResult);
+        } catch (Exception $e) {
+            Log::record('[Options][getCategory] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
         }
     }
     private function getKeyValue($arr) {

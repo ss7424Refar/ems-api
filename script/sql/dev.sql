@@ -48,4 +48,11 @@ CREATE TABLE `ems_mail_queue` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+-- 增加样品区分表
+CREATE TABLE `tpms`.`ems_const` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`));
+
+
 

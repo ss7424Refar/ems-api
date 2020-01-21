@@ -91,7 +91,7 @@ class Permission extends Common {
             'ems_nav_delete_review'=>'/delapp');
 
         $nameList = array('ems_nav_return'=>'待归还', 'ems_nav_assign'=>'待分配',
-            'ems_nav_borrow_review'=>'待申请审批', 'ems_nav_scrap_review'=>'待报废审批',
+            'ems_nav_borrow_review'=>'待借出审批', 'ems_nav_scrap_review'=>'待报废审批',
             'ems_nav_delete_review'=>'待删除审批');
 
         try {
