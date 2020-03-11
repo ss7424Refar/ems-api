@@ -19,7 +19,9 @@ use think\Exception;
 use \PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
- * 使用方法 php think ImportData '/opt/test.xlsx'
+ * 使用方法
+ * 1. chmod 757 target_excel
+ * 2. php think ImportData '/opt/test.xlsx'
  * Class ImportData
  * @package app\home\command
  */
@@ -46,6 +48,7 @@ class ImportData extends Command
 
             $importArr = $objPHPExcel->getSheet(0)->toArray();
 
+            $saveArr = []; // 保存区分
             foreach ($importArr as $index => $item) {
                 if ($index >= 1) {
                     $id = $item[0]; $category = $item[2];
@@ -57,6 +60,9 @@ class ImportData extends Command
                                 try {
                                     Db::table('ems_main_engine')->where('fixed_no', $id)
                                         ->update(['category' => $category]);
+                                    if (!in_array($category, $saveArr)) {
+                                        $saveArr[] = $category;
+                                    }
                                 } catch (Exception $e) {
                                     $output->writeln('update data fail ... ['. $id .'] '. $e->getMessage());
                                 }
@@ -69,6 +75,28 @@ class ImportData extends Command
                         }
                     }
                 }
+            }
+            // 保存到ems_const
+            if (!empty($saveArr)) {
+                $output->writeln('start delete ems_const ...' );
+                // 先删除ems_const表
+                try {
+                    Db::table('ems_const')->delete(true);
+                } catch (Exception $e) {
+                    $output->writeln('delete ems_const fail ... '. $e->getMessage());
+                }
+                $output->writeln('start update ems_const ...' );
+
+                // 重置序列
+                Db::execute('ALTER TABLE ems_const AUTO_INCREMENT = 1;');
+                // 插入数据
+                foreach ($saveArr as $value) {
+                    Db::table('ems_const')
+                        ->data(['id'=>null,'name'=>$value])
+                        ->insert();
+
+                }
+                $output->writeln('end update ems_const ...' );
             }
         } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
             $output->writeln('read data fail ... '. $e->getMessage());
