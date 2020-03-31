@@ -101,7 +101,7 @@ class Options extends Common {
      */
     public function getCategory() {
         try {
-            $res = Db::table('ems_const')->field('name')->select();
+            $res = Db::table('ems_const')->field('name')->order('name')->select();
 
             $jsonResult = [];
             foreach ($res as $value) {

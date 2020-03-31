@@ -95,7 +95,8 @@ class Chart extends Common{
 
         try {
             $res = Db::table('ems_main_engine')->field('count(*) as total, category')
-                    ->whereNotNull('category')->group('category')->select();
+                    ->whereNotNull('category')->group('category')
+                    ->order('total desc')->limit(10)->select();
 
             foreach ($res as $index => $item) {
                 $data['value'] = $item['total'];
