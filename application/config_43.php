@@ -19,7 +19,7 @@ return [
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态
-    'app_status'             => 'config_home',
+    'app_status'             => '',
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
@@ -250,7 +250,7 @@ return [
         // 服务器地址
         'hostname'    => '172.30.52.29',
         // 数据库名
-        'database'    => 'pcs',
+        'database'    => 'tpms',
         // 数据库用户名
         'username'    => 'root',
         // 数据库密码
@@ -295,7 +295,7 @@ return [
 
     'mail_import_cc'           => '["Design_SWT@dbh.dynabook.com", "Design_DT@dbh.dynabook.com"]',
     'mail_import_to'           => '["yuanjin.chen@dbh.dynabook.com", "Daoqi.Zhang@dbh.dynabook.com", "jianzhong.yu@dbh.dynabook.com"]',
-    'mail_header_subject'      => '',
+    'mail_header_subject'      => '[测试用的邮件]',
 
     // +----------------------------------------------------------------------
     // | 自定义变量

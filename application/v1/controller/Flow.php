@@ -75,7 +75,7 @@ class Flow extends Common {
                 foreach ($inputData as $sec => $value) {
                     $to = $this->getSectionAddress($sec);
                     $section = $sectionArray[$userInfo['SECTION']];
-                    $subject = MailTemplate::$subjectBorrowApply. $section. ' '.$user;
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectBorrowApply. $section. ' '.$user;
                     $mainBody = MailTemplate::getBorrowApply($section, $user);
 
                     // 插入数据
@@ -151,7 +151,7 @@ class Flow extends Common {
                 if (!empty($inputData)) {
                     $to = $this->getSampleAddress(EMS_ADMIN);
 
-                    $subject = MailTemplate::$subjectBorrowApplyApproveFromSection.$user['USER_NAME'];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectBorrowApplyApproveFromSection.$user['USER_NAME'];
                     $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSection();
 
                     // 插入数据
@@ -198,7 +198,7 @@ class Flow extends Common {
                 if (!empty($inputData)) {
                     foreach ($inputData as $key => $value) {
                         $to = $this->getUserInfoById($key);
-                        $subject = MailTemplate::$subjectBorrowApplyRejectFromSection.$user['USER_NAME'];
+                        $subject = config('mail_header_subject'). MailTemplate::$subjectBorrowApplyRejectFromSection.$user['USER_NAME'];
                         $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSection($to['USER_NAME']);
 
                         // 插入数据
@@ -295,7 +295,7 @@ class Flow extends Common {
                if (!empty($inputData)) {
                    foreach ($inputData as $key => $value) {
                        $to = $this->getUserInfoById($key);
-                       $subject = MailTemplate::$subjectBorrowApplyApproveFromSample.$user['USER_NAME'];
+                       $subject = config('mail_header_subject'). MailTemplate::$subjectBorrowApplyApproveFromSample.$user['USER_NAME'];
                        $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSample($to['USER_NAME']);
 
                        // 插入数据
@@ -342,7 +342,7 @@ class Flow extends Common {
                if (!empty($inputData)) {
                    foreach ($inputData as $key => $value) {
                        $to = $this->getUserInfoById($key);
-                       $subject = MailTemplate::$subjectBorrowApplyRejectFromSample.$user['USER_NAME'];
+                       $subject = config('mail_header_subject'). MailTemplate::$subjectBorrowApplyRejectFromSample.$user['USER_NAME'];
                        $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSample($to['USER_NAME']);
 
                        // 插入数据
@@ -433,7 +433,7 @@ class Flow extends Common {
             if (!empty($inputData)) {
                 foreach ($inputData as $key => $value) {
                     $to = $this->getUserInfoById($key);
-                    $subject = MailTemplate::$subjectReturnSample.$user['USER_NAME'];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectReturnSample.$user['USER_NAME'];
                     $mainBody = MailTemplate::getReturnSample($to['USER_NAME']);
 
                     // 插入数据
@@ -513,7 +513,7 @@ class Flow extends Common {
                 foreach ($inputData as $sec => $value) {
                     $to = $this->getSectionAddress($sec);
                     $section = $sectionArray[$userInfo['SECTION']];
-                    $subject = MailTemplate::$subjectDeleteApply. $section. ' '.$user;
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectDeleteApply. $section. ' '.$user;
                     $mainBody = MailTemplate::getDeleteApply($section, $user);
 
                     // 插入数据
@@ -582,7 +582,7 @@ class Flow extends Common {
                 if (!empty($inputData)) {
                     $to = $this->getSampleAddress(EMS_ADMIN);
 
-                    $subject = MailTemplate::$subjectDeleteApplyApproveFromSection.$user['USER_NAME'];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectDeleteApplyApproveFromSection.$user['USER_NAME'];
                     $mainBody = MailTemplate::getDeleteApproveFromSection();
 
                     // 插入数据
@@ -629,7 +629,7 @@ class Flow extends Common {
                 if (!empty($inputData)) {
                     $to = $this->getSampleAddress(EMS_ADMIN);
 
-                    $subject = MailTemplate::$subjectDeleteApplyRejectFromSection.$user['USER_NAME'];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectDeleteApplyRejectFromSection.$user['USER_NAME'];
                     $mainBody = MailTemplate::getDeleteRejectFromSection();
 
                     // 插入数据
@@ -710,7 +710,7 @@ class Flow extends Common {
             if (!empty($inputData)) {
                 $to = $this->getSampleAddress(EMS_AUDITOR);
 
-                $subject = MailTemplate::$subjectScrapApply.$user;
+                $subject = config('mail_header_subject'). MailTemplate::$subjectScrapApply.$user;
                 $mainBody = MailTemplate::getScrapApply();
 
                 // 插入数据
@@ -784,7 +784,7 @@ class Flow extends Common {
                 // 存入邮件队列表中
                 if (!empty($inputData)) {
                     $to = $this->getSampleAddress(EMS_ADMIN);
-                    $subject = MailTemplate::$subjectScrapApplyApproveFromSample.$user['USER_NAME'];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectScrapApplyApproveFromSample.$user['USER_NAME'];
                     $mainBody = MailTemplate::getScrapApproveFromSample();
 
                     // 插入数据
@@ -831,7 +831,7 @@ class Flow extends Common {
 
                 if (!empty($inputData)) {
                     $to = $this->getSampleAddress(EMS_ADMIN);
-                    $subject = MailTemplate::$subjectScrapApplyRejectFromSample.$user['USER_NAME'];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectScrapApplyRejectFromSample.$user['USER_NAME'];
                     $mainBody = MailTemplate::getScrapRejectFromSample();
 
                     // 插入数据

@@ -294,6 +294,7 @@ return [
 
     'mail_import_cc'           => '["Design_SWT@dbh.dynabook.com", "Design_DT@dbh.dynabook.com"]',
     'mail_import_to'           => '["yuanjin.chen@dbh.dynabook.com", "Daoqi.Zhang@dbh.dynabook.com", "jianzhong.yu@dbh.dynabook.com"]',
+    'mail_header_subject'      => '[测试用的邮件]',
 
     // +----------------------------------------------------------------------
     // | 自定义变量
