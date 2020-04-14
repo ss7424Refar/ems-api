@@ -3,47 +3,50 @@ SET SQL_SAFE_UPDATES=0;
 
 DROP TABLE `c3p0testtable`, `d_approve`, `d_asset_status_record`,
 `d_attachment`, `d_cabinet`, `d_camera`, `d_comment_log`, `d_const_monitor`,
-`d_display`, `d_error_record`, `d_ip_telephone`, `d_main_engine_bak`, `d_monitor_system`, 
+`d_display`, `d_error_record`, `d_ip_telephone`, `d_main_engine_bak`, `d_monitor_system`,
 `d_ovh`, `d_printer`, `d_relay_system`, `d_scanner`, `d_software_asset`, `d_ups`;
 
-DROP TABLE `h_app_config`, `h_app_info`, `h_asset`, `h_change`, `h_db_config`, 
-`h_db_info`, `h_network_config`, `h_network_info`, `h_problem`, `h_request`, 
-`h_system_config`, `h_system_info`, `h_webpage_config`, `h_webpage_info`, `m_approve_setting`, 
-`m_authority`, `m_group`, `m_maintenance`, `m_project`, `m_project_user`, `m_supplier`, 
+DROP TABLE `h_app_config`, `h_app_info`, `h_asset`, `h_change`, `h_db_config`,
+`h_db_info`, `h_network_config`, `h_network_info`, `h_problem`, `h_request`,
+`h_system_config`, `h_system_info`, `h_webpage_config`, `h_webpage_info`, `m_approve_setting`,
+`m_authority`, `m_group`, `m_maintenance`, `m_project`, `m_project_user`, `m_supplier`,
 `r_group_user`, `r_role_authority`, `sla_level_setting`, `t_solution`, `m_role`, `r_role_user`, `m_const`;
 
 -- d_main_engine 增加[区分][供应商]字段
-ALTER TABLE `d_main_engine` 
-CHANGE COLUMN `supplier` `supplier` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '供应商' ,
-ADD COLUMN `category` VARCHAR(25) CHARACTER SET 'utf8' NULL COMMENT '区分' AFTER `MODEL_NAME`;
+ALTER TABLE `d_main_engine`
+  CHANGE COLUMN `supplier` `supplier` VARCHAR(45) CHARACTER SET 'utf8' NULL DEFAULT NULL COMMENT '供应商' ,
+  ADD COLUMN `category` VARCHAR(25) CHARACTER SET 'utf8' NULL COMMENT '区分' AFTER `MODEL_NAME`;
 
 -- m_user
-ALTER TABLE `m_user` 
-DROP COLUMN `IS_IMPORT`,
-DROP COLUMN `EMPLID`,
-DROP COLUMN `LOCATION`,
-DROP COLUMN `CODE_CENTER`,
-DROP COLUMN `IP_ADDRESS`,
-DROP COLUMN `UPDATE_DATE`,
-DROP COLUMN `UPDATE_USER`,
-DROP COLUMN `CREATE_DATE`,
-DROP COLUMN `CREATE_USER`,
-DROP COLUMN `COMPANY`,
-DROP COLUMN `PLACE`,
-DROP COLUMN `JOB`,
-DROP COLUMN `GENDER`,
-DROP COLUMN `PHONE_NO`,
-DROP COLUMN `MOBILE_NO`,
-DROP COLUMN `SUP_USER_ID`;
+ALTER TABLE `m_user`
+  DROP COLUMN `IS_IMPORT`,
+  DROP COLUMN `EMPLID`,
+  DROP COLUMN `LOCATION`,
+  DROP COLUMN `CODE_CENTER`,
+  DROP COLUMN `IP_ADDRESS`,
+  DROP COLUMN `UPDATE_DATE`,
+  DROP COLUMN `UPDATE_USER`,
+  DROP COLUMN `CREATE_DATE`,
+  DROP COLUMN `CREATE_USER`,
+  DROP COLUMN `COMPANY`,
+  DROP COLUMN `PLACE`,
+  DROP COLUMN `JOB`,
+  DROP COLUMN `GENDER`,
+  DROP COLUMN `PHONE_NO`,
+  DROP COLUMN `MOBILE_NO`,
+  DROP COLUMN `SUP_USER_ID`;
 
 -- 重命名
-ALTER TABLE `d_main_engine` 
+drop table if exists ems_main_engine;
+ALTER TABLE `d_main_engine`
 RENAME TO  `ems_main_engine` ;
 
-ALTER TABLE `h_borrow_history` 
+drop table if exists ems_borrow_history;
+ALTER TABLE `h_borrow_history`
 RENAME TO  `ems_borrow_history` ;
 
-ALTER TABLE `m_user` 
+drop table if exists ems_user;
+ALTER TABLE `m_user`
 RENAME TO  `ems_user` ;
 
 -- 去除回车
@@ -81,8 +84,9 @@ ALTER TABLE `ems_main_engine`
 
 -- 添加function
 
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `GETFIXEDNO`() RETURNS varchar(20) CHARSET utf8
+DELIMITER $$
+DROP FUNCTION IF EXISTS GETFIXEDNO$$
+CREATE FUNCTION `GETFIXEDNO`() RETURNS varchar(20) CHARSET utf8
   BEGIN
     DECLARE Code1 varchar(20);
     DECLARE Code2 varchar(20);
@@ -102,7 +106,8 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `GETFIXEDNO`() RETURNS varchar(20) CH
       SET Code2 =MinCodeInYear;
     END IF;
     RETURN Code2;
-  END ;;
+  END $$
+DELIMITER ;
 
 -- 删除样品表中model_status的垃圾数据, 否则全量导出的时候会失败
 delete FROM `ems_main_engine` WHERE  `model_status` = '';

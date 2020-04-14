@@ -216,33 +216,31 @@ class MailTemplate {
     private static function getCSSStyle() {
         return
             '<style type="text/css">' .
-            '	  p {'.
+            '     p {'.
             '        font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;'.
             '        font-size:0.75em;'.
             '        margin: 8px 0px 2px 0px'.
             '     }'.
-            '	  #customers{'.
+            '     #customers{'.
             '        font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;'.
             '        border-collapse:collapse;'.
-            '        margin-top:10px'.
+            '        margin-top:15px'.
             '     }'.
-            '	  #customers td, #customers th{'.
-            '        font-size:0.75em;'.
+            '     #customers td , #customers th {'.
+            '        font-size:12px;'.
+            '        font-weight:normal;'.
             '        border:1px solid #D4D4D4;'.
-            '        padding:3px 7px 2px 7px;'.
-            '	  }'.
-            '	  #customers th {'.
-            '        font-size:0.75em;'.
-            '        text-align:left;'.
-            '        padding-top:5px;'.
-            '        padding-bottom:4px;'.
+            '        text-align: left;'.
+            '        padding: 0px 7px 11px 2px;'.
+            '     }'.
+            '     #customers th {'.
             '        background-color:#317EF3;'.
             '        color:#ffffff;'.
-            '	   }'.
-            '	   #customers tr.alt td {'.
+            '      }'.
+            '      #customers tr.alt td {'.
             '         color:#000000;'.
             '         background-color:#F6F4F0;'.
-            '	   }'.
+            '      }'.
             '</style>' ;
     }
 }
