@@ -54,5 +54,4 @@ CREATE TABLE `tpms`.`ems_const` (
   `name` VARCHAR(100) NULL,
   PRIMARY KEY (`id`));
 
-
-
+UPDATE `tpms`.`ems_user` SET `MAIL`='yuanjin.chen@dbh.dynabook.com' WHERE `ID`='1';

@@ -52,8 +52,8 @@ function getSearchCondition($formData) {
         if (!empty($formData->type)) {
             $map['type'] = ['like', '%' . $formData->type . '%'];
         }
-        if (!empty($formData->user)) {
-            $map['user_name'] = ['like', '%' .$formData->user. '%'];
+        if (!empty($formData->username)) {
+            $map['user_name'] = ['like', '%' .$formData->username. '%'];
         }
         if (!empty($formData->history_user)) {
             $map['historyUser'] = ['like', '%' . $formData->history_user . '%'];
