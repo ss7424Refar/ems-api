@@ -9,27 +9,48 @@
 namespace app\vt\controller;
 
 use think\Controller;
-use think\Db;
-use think\Session;
+use think\Log;
+use think\Loader;
+Loader::import('lib.swift_required');
+use Swift_SmtpTransport;
+use Swift_Mailer;
+use Swift_Message;
 
 class Test extends Controller {
 
     function mail(){
+        $content = $this->request->param('content');
+
         $to = ['min.wang@dbh.dynabook.com'];
         $subject = config('mail_header_subject'). '[调试样式]';
-        $mainBody = '<p>Dear Managers</p><p>SYD课的superAdmin提交了样品借出申请, 请登录样品管理系统确认及审批, 谢谢!</p>';
-        $from = ['test@dbh.dynabook.com'];
-        $value = array(
-                    array('id'=>'2003181', 'name'=>'Altair LR40', 'desc'=>'hey'),
-                    array('id'=>'2003182', 'name'=>'Altair LR30', 'desc'=>'WOW!'));
+        $from = '[\'test@dbh.dynabook.com\']';
 
-        // 插入数据
-        $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
-            'from'=>json_encode($from), 'to'=>json_encode($to), 'table_data' => json_encode($value)];
-        Db::table('ems_mail_queue')->insert($data);
+        Log::record($content);
+        $r = self::send($from, $to, config('mail_cc'), $subject, $content);
 
-        return 'done';
+        if ($r > 0) {
+            return 'done';
+        }
+        return 'fail';
+    }
 
+    // 发送邮件function
+    private static function send($from, $to, $cc, $mailTitle, $content) {
+
+        $transport = Swift_SmtpTransport::newInstance(config('smtp_host'), config('smtp_port'));
+
+        $mailer = Swift_Mailer::newInstance($transport);
+
+        // Create a message
+        $message = Swift_Message::newInstance($mailTitle)
+            ->setFrom(array($from))
+            ->setTo($to) // 这里也是需要数组的
+            ->setCc(json_decode($cc, true))
+            ->setBody($content, 'text/html', 'utf-8');
+
+        // Send the message
+        $result = $mailer->send($message);
+        return $result;
     }
 
 }
