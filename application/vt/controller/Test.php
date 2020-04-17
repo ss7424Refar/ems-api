@@ -23,7 +23,7 @@ class Test extends Controller {
 
         $to = ['min.wang@dbh.dynabook.com'];
         $subject = config('mail_header_subject'). '[调试样式]';
-        $from = '[\'test@dbh.dynabook.com\']';
+        $from = ['test@dbh.dynabook.com'];
 
         Log::record($content);
         $r = self::send($from, $to, config('mail_cc'), $subject, $content);
@@ -43,7 +43,7 @@ class Test extends Controller {
 
         // Create a message
         $message = Swift_Message::newInstance($mailTitle)
-            ->setFrom(array($from))
+            ->setFrom($from)
             ->setTo($to) // 这里也是需要数组的
             ->setCc(json_decode($cc, true))
             ->setBody($content, 'text/html', 'utf-8');

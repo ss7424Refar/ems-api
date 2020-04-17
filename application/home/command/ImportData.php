@@ -54,9 +54,12 @@ class ImportData extends Command
                     $id = $item[0]; $category = $item[2];
                     if (null != $category) {
                         try {
-                            $res = Db::table('ems_main_engine')->where('fixed_no', $id)->find();
-                            // 存在
-                            if ($res) {
+                            $res = $this->getStart($output, $id);
+//                            $output->writeln('id=' .$id . ' ,res='. $res);
+                            if ('3' != $res) {
+                                if ('2' == $res) {
+                                    $id = '0'. $id;
+                                }
                                 try {
                                     Db::table('ems_main_engine')->where('fixed_no', $id)
                                         ->update(['category' => $category]);
@@ -106,4 +109,22 @@ class ImportData extends Command
         $output->writeln('end input data ...' );
     }
 
+    protected function getStart(Output $output, $id) {
+        try {
+            $res = Db::table('ems_main_engine')->where('fixed_no', $id)->find();
+            // 存在
+            if ($res) {
+                return '1';
+            } else {
+                $res = Db::table('ems_main_engine')->where('fixed_no', '0'. $id)->find();
+                if ($res) {
+                    return '2';
+                }
+                return '3';
+            }
+        } catch (Exception $e) {
+            $output->writeln('getStart select data byId fail ... ['. $id .'] '. $e->getMessage());
+        }
+        return '3';
+    }
 }
