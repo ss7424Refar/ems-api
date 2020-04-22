@@ -218,23 +218,24 @@ class MailTemplate {
             '<style type="text/css">' .
             '     p {'.
             '        font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;'.
-            '        font-size:0.75em;'.
-            '        margin: 8px 0px 2px 0px'.
+            '        font-size:13px;'.
+            '        margin: 8px 0px 4px 0px;'.
+            '        color: Purple'.
             '     }'.
             '     #customers{'.
             '        font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;'.
             '        border-collapse:collapse;'.
-            '        margin-top:15px'.
             '     }'.
             '     #customers td , #customers th {'.
             '        font-size:12px;'.
             '        font-weight:normal;'.
             '        border:1px solid #D4D4D4;'.
             '        text-align: left;'.
-            '        padding: 0px 7px 11px 2px;'.
+            '        padding: 5px 5px 5px 5px;'.
             '     }'.
             '     #customers th {'.
-            '        background-color:#317EF3;'.
+//            '        background-color:#317EF3;'.
+            '        background-color:'.self::getRandomColor().
             '        color:#ffffff;'.
             '      }'.
             '      #customers tr.alt td {'.
@@ -242,5 +243,12 @@ class MailTemplate {
             '         background-color:#F6F4F0;'.
             '      }'.
             '</style>' ;
+    }
+
+    // 别问, 问就是生成所有的颜色满足领导一切需求
+    private static function getRandomColor() {
+        $colors = array('Crimson', 'Wheat', 'Peru', 'LightSeaGreen', 'BlueViolet', 'RoyalBlue', 'Black');
+
+        return $colors[rand(0, 6)].';';
     }
 }
