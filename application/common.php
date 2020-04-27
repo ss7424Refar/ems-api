@@ -44,7 +44,7 @@ function getSearchCondition($formData) {
     if ($formData) {
         $formData = json_decode($formData);
         if (!empty($formData->fixed)) {
-            $map['fixed_no'] = $formData->fixed;
+            $map['fixed_no'] = ['like', '%' . $formData->fixed . '%'];
         }
         if (!empty($formData->names)) {
             $map['MODEL_NAME'] = ['like', '%' . $formData->names . '%'];
