@@ -31,12 +31,14 @@ class MailMan {
             foreach ($res as $key => $item) {
                 if (FLOW == $item['type']) {
                     $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
+                    $cc = config('mail_cc');
                 } else {
                     $content = MailTemplate::getImportContent($item['main_body'], $item['table_data']);
+                    $cc = config('mail_import_cc');
                 }
 
                 Log::record($content);
-                $r = self::send($item['from'], json_decode($item['to'], true), config('mail_cc'),
+                $r = self::send($item['from'], json_decode($item['to'], true), $cc,
                     $item['subject'], $content);
 
                 if ($r > 0) {
