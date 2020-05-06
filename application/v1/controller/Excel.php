@@ -152,7 +152,7 @@ class Excel extends Common{
             // 发送给前端的数据
             $errorArray = [];
             // 定义键名
-            $key = array('fixed_no', 'MODEL_NAME', 'SERIAL_NO', 'type', 'department', 'section_manager',
+            $key = array('fixed_no', 'MODEL_NAME', 'category', 'SERIAL_NO', 'type', 'department', 'section_manager',
                 'model_status', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
                 'screen_size', 'MEMORY', 'HDD', 'cd_rom', 'location', 'remark');
 
@@ -226,11 +226,11 @@ class Excel extends Common{
                     if ($key >= 2) {
                         $tmp['id'] = $item[0];
                         $tmp['name'] = $item[1];
-                        $tmp['sn'] = $item[2];
-                        $tmp['pn'] = $item[3];
-                        $tmp['section'] = $item[5];
-                        $tmp['remark'] = $item[17];
-                        $tmp['charge'] = $_linkArr[$item[5]];
+                        $tmp['sn'] = $item[3];
+                        $tmp['pn'] = $item[4];
+                        $tmp['section'] = $item[6];
+                        $tmp['remark'] = $item[18];
+                        $tmp['charge'] = $_linkArr[$item[6]];
                         $json[] = $tmp;
                     }
                 }
