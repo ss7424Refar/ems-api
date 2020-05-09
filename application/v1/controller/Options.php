@@ -116,6 +116,37 @@ class Options extends Common {
             return apiResponse(ERROR, 'server error');
         }
     }
+
+    /**
+     * showdoc
+     * @catalog 接口文档/下拉选项
+     * @title 下拉选项-添加区分
+     * @description 添加区分
+     * @method post
+     * @url http://domain/ems-api/v1/Options/addCategory
+     * @param 无
+     * @return {"status":0,"msg":"[Options][addCategory] success","data":[]}
+     * @return_param status int 状态码
+     * @return_param msg string 状态码说明
+     * @remark 返回0, 代表获取数据. 返回1, 需要显示msg(data duplicate)
+     */
+    public function addCategory() {
+        try {
+
+            $category = $this->request->param('category');
+            $res = Db::table('ems_const')->where('name', $category)->find();
+
+            if (!empty($res)) {
+                return apiResponse(ERROR, 'data duplicate');
+            }
+            Db::table('ems_const')->insert(['name' => $category]);
+            return apiResponse(SUCCESS, '[Options][addCategory] success');
+        } catch (Exception $e) {
+            Log::record('[Options][addCategory] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+    }
+
     private function getKeyValue($arr) {
         $jsonResult = array();
         foreach($arr as $key => $value){
