@@ -17,6 +17,7 @@ Loader::import('lib.swift_required');
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
+use Swift_RfcComplianceException;
 
 class MailMan {
 
@@ -39,19 +40,19 @@ class MailMan {
                 }
 
                 Log::record($content);
-                $r = self::send($item['from'], json_decode($item['to'], true), $cc,
-                    $item['subject'], $content);
+                try {
+                    $r = self::send($item['from'], json_decode($item['to'], true), $cc,
+                        $item['subject'], $content);
 
-                if ($r > 0) {
-                    Log::record('[MailMan][dog] success ' .$item['id']);
+                    if ($r > 0) {
+                        Log::record('[MailMan][dog] success ' .$item['id']);
 
-                    // 删除该条记录
-                    Db::table('ems_mail_queue')->where('id', $item['id'])->delete();
-
-                } else {
-                    Log::record('[MailMan][dog] fail ' .$item['id']);
+                        // 删除该条记录
+                        Db::table('ems_mail_queue')->where('id', $item['id'])->delete();
+                    }
+                } catch (Swift_RfcComplianceException $e) {
+                    Log::record('[MailMan][dog] fail ' .$item['id'] .' '.$e->getMessage());
                 }
-
             }
         } catch (Exception $e) {
             Log::record('[MailMan][dog] error' . $e->getMessage());
