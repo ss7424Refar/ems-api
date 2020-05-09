@@ -154,7 +154,7 @@ class Status extends Common{
                 // 只统计自己申请的机子
                 $allData = Db::table('ems_main_engine')->where('model_status', DELETE_REVIEW)
                     ->where('scrap_operator', $usr['USER_NAME'])->order('fixed_no desc')->select();
-            } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId']) {
+            } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId'] || ST_MANAGER == $userInfo['roleId']) {
                 // 只统计自己课下的机子
                 $allData = Db::table('ems_main_engine')->where('model_status', DELETE_REVIEW)
                     ->where('section_manager', $userInfo['section'])->order('fixed_no desc')->select();
@@ -195,7 +195,7 @@ class Status extends Common{
                 $allData = Db::table('ems_main_engine')->where('model_status', BORROW_REVIEW)
                     ->order('fixed_no desc')->select();
 
-            } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId']) {
+            } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId'] || ST_MANAGER == $userInfo['roleId']) {
                 // 只统计自己课下的机子
                 $allData = Db::table('ems_main_engine')->where('model_status', BORROW_REVIEW)
                     ->where('section_manager', $userInfo['section'])->order('fixed_no desc')->select();

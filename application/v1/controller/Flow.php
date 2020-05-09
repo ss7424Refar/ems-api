@@ -944,7 +944,7 @@ class Flow extends Common {
             $subSqlA = Db::table('ems_user')->where('SECTION', $section)
                 ->where('IS_DELETED', 0)->buildSql();
             // 查询T系统roleId 为课长
-            $subSqlB = Db::table('users')->whereIn('role_id', [T_MANAGER, S_MANAGER])->buildSql();
+            $subSqlB = Db::table('users')->whereIn('role_id', [T_MANAGER, S_MANAGER, ST_MANAGER])->buildSql();
 
             $res = Db::table($subSqlA . ' a')
                 ->join([$subSqlB=> 'b'], 'a.id=b.ems_uid')->field('MAIL')->select();

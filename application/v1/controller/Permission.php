@@ -32,6 +32,7 @@ class Permission extends Common {
          * - 样机审核员 {报废} {删除}
          * - S-Manager {申请} {导出}
          * - T-Manager {申请} {导出}
+         * - ST-Manager {申请} {导出}
          */
         try {
             $roleId = $this->loginUser['roleId'];
@@ -57,7 +58,7 @@ class Permission extends Common {
 
             }
             // 获取chart的权限
-            if (ADMIN == $roleId || S_MANAGER == $roleId || T_MANAGER == $roleId || EMS_ADMIN == $roleId) {
+            if (ADMIN == $roleId || S_MANAGER == $roleId || T_MANAGER == $roleId || ST_MANAGER == $roleId || EMS_ADMIN == $roleId) {
                 $jsonResult['ems_chart'] = true;
             } else {
                 $jsonResult['ems_chart'] = false;
@@ -124,6 +125,7 @@ class Permission extends Common {
                  * - 样机审核员 {待报废审批}
                  * - S-Manager {待借出审批} {待删除审批}
                  * - T-Manager {待借出审批} {待删除审批}
+                 * - ST-Manager {待借出审批} {待删除审批}
                  */
                 // 要获取数目的话, 只能一个个判断
                 if ('ems_nav_assign' == $desc) {
@@ -137,7 +139,7 @@ class Permission extends Common {
                     // 如果是Admin 显示所有数据
                     if (ADMIN == $userInfo['roleId']) {
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)->count();
-                    } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId']) {
+                    } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId'] || ST_MANAGER == $userInfo['roleId']) {
                         // 只统计自己课下的机子
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
                             ->where('section_manager', $userInfo['section'])->count();
@@ -150,7 +152,7 @@ class Permission extends Common {
                         // 只统计自己申请的机子
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
                             ->where('scrap_operator', $usr['USER_NAME'])->count();
-                    } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId']) {
+                    } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId'] || ST_MANAGER == $userInfo['roleId']) {
                         // 只统计自己课下的机子
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
                             ->where('section_manager', $userInfo['section'])->count();

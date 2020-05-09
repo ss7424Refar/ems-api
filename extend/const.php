@@ -45,6 +45,7 @@ define('DELETE_REVIEW', 6);
 define('ADMIN', 8);
 define('T_MANAGER', 6);
 define('S_MANAGER', 20);
+define('ST_MANAGER', 21); // 别问我这是啥角色, 我也不知道.
 define('EMS_ADMIN', 14);
 define('EMS_AUDITOR', 15);
 define('COMMON_USER', 16); // 可能没什么用, 先放着
