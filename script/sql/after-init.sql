@@ -111,3 +111,6 @@ DELIMITER ;
 
 -- 删除样品表中model_status的垃圾数据, 否则全量导出的时候会失败
 delete FROM `ems_main_engine` WHERE  `model_status` = '';
+update ems_main_engine set user_id = null where user_id = '';
+delete from ems_main_engine where fixed_no = '';
+

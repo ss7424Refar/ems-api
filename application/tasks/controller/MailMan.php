@@ -26,6 +26,7 @@ class MailMan {
             Log::record('[MailMan] start');
 
             $res = Db::table('ems_mail_queue')->where('to', '<>', '[]')
+                ->where('to', '<>', '[null]')->whereNotNull('from')
                 ->order('id')->select();
 
             foreach ($res as $key => $item) {
