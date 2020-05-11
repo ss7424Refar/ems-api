@@ -59,13 +59,23 @@ class Worker extends Server
     {
 
         // 只在id编号为0的进程上设置定时器，其它1、2、3号进程不设置定时器
-        // 执行watchExpired
         if($worker->id === 0) {
             Timer::add(2, function()use($worker){
-                Log::record('[Worker][id][1][SendMail]');
+                Log::record('[Worker][id][0][SendMail]');
                 $watcher = controller('tasks/MailMan');
                 $watcher->dog();
             });
+        }
+        else if($worker->id === 1) {
+            Timer::add(3600, function()use($worker){
+                Log::record('[Worker][id][1][ImportData]');
+                // 每天0点执行任务
+                if('00' == date("H", time())) {
+                    $watcher = controller('tasks/ImportData');
+                    $watcher->dog();
+                }
+            });
+
         }
     }
 }

@@ -290,7 +290,8 @@ return [
     'smtp_host'         => '172.30.52.43',
     'smtp_port'         => '25',
     'mail_from'         => 'ems_swv@dbh.dynabook.com',
-    'mail_cc'           => '["lin.zhu@dbh.dynabook.com", "bin.yan@dbh.dynabook.com"]',
+//    'mail_cc'           => '["lin.zhu@dbh.dynabook.com", "bin.yan@dbh.dynabook.com"]',
+    'mail_cc'           => '["lin.zhu@dbh.dynabook.com"]',
 
 
     'mail_import_cc'           => '["Design_SWT@dbh.dynabook.com", "Design_DT@dbh.dynabook.com"]',
