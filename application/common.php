@@ -82,6 +82,23 @@ function getSearchCondition($formData) {
         if (!empty($formData->hardware)) {
             $map['HDD'] = ['like', '%' . $formData->hardware . '%'];
         }
+        // 新增字段
+        // 序列号
+        if (!empty($formData->serial_no)) {
+            $map['SERIAL_NO'] = ['like', '%' . $formData->serial_no . '%'];
+        }
+        // 流水号
+        if (!empty($formData->serial_number)) {
+            $map['serial_number'] = ['like', '%' . $formData->serial_number . '%'];
+        }
+        // 发票号
+        if (!empty($formData->invoice_no)) {
+            $map['invoice_no'] = ['like', '%' . $formData->invoice_no . '%'];
+        }
+        // 备注
+        if (!empty($formData->remark)) {
+            $map['remark'] = ['like', '%' . $formData->remark . '%'];
+        }
     }
 
     return $map;
