@@ -158,13 +158,14 @@ class Permission extends Common {
                             ->where('section_manager', $userInfo['section'])->count();
                     }
                 }  elseif ('ems_nav_scrap_review' == $desc) {
-                    if (ADMIN == $userInfo['roleId'] || EMS_AUDITOR == $userInfo['roleId']) {
+                    if (ADMIN == $userInfo['roleId'] || EMS_AUDITOR == $userInfo['roleId'] || EMS_ADMIN == $userInfo['roleId']) {
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)->count();
-                    } elseif (EMS_ADMIN == $userInfo['roleId']) {
-                        // 只统计自己申请的机子
-                        $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
-                            ->where('scrap_operator', $usr['USER_NAME'])->count();
                     }
+//                    elseif (EMS_ADMIN == $userInfo['roleId']) {
+//                        // 只统计自己申请的机子
+//                        $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
+//                            ->where('scrap_operator', $usr['USER_NAME'])->count();
+//                    }
                 }
 
                 // 一般不会走到这个分支
@@ -189,7 +190,7 @@ class Permission extends Common {
      * @url http://domain/ems-api/v1/Permission/showCancel
      * @return {"status":0,"msg":"[Permission][showCancel] success","data":{"showCancel":false}}
      * @return_param showCancel boolean 是否显示按钮
-     * @remark 只有样机管理员/Admin才显示申请-同意-取消(删除/报废申请)
+     * @remark 待删除审批当true时,显示cancel. 待报废审批当true时显示同意/拒绝/取消. 待借出审批没有取消按钮.
      */
     public function showCancel() {
         try {
