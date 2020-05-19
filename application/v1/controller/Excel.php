@@ -164,7 +164,7 @@ class Excel extends Common{
             for ($i = 2; $i < count($importArr); $i++) {
                 $data = array();
                 for ($j = 0; $j < count($key); $j++) {
-                    $data[$key[$j]] = $importArr[$i][$j];
+                    $data[$key[$j]] = trim($importArr[$i][$j]);
                 }
                 // 课转换
                 $keyS = array_search($data['section_manager'], $sectionArray);
@@ -224,13 +224,13 @@ class Excel extends Common{
                 foreach ($importArr as $key => $item) {
                     $tmp = null;
                     if ($key >= 2) {
-                        $tmp['id'] = $item[0];
-                        $tmp['name'] = $item[1];
-                        $tmp['sn'] = $item[3];
-                        $tmp['pn'] = $item[4];
-                        $tmp['section'] = $item[6];
-                        $tmp['remark'] = $item[18];
-                        $tmp['charge'] = $_linkArr[$item[6]];
+                        $tmp['id'] = trim($item[0]);
+                        $tmp['name'] = trim($item[1]);
+                        $tmp['sn'] = trim($item[3]);
+                        $tmp['pn'] = trim($item[4]);
+                        $tmp['section'] = trim($item[6]);
+                        $tmp['remark'] = trim($item[18]);
+                        $tmp['charge'] = trim($_linkArr[$item[6]]);
                         $json[] = $tmp;
                     }
                 }
