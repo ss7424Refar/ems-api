@@ -128,7 +128,6 @@ class Excel extends Common{
         try {
             $objReader = IOFactory::createReader('Xlsx');
             $objReader->setReadDataOnly(TRUE);
-//            $objReader = IOFactory::createReader('Xls');
             $objPHPExcel = $objReader->load($excel['tmp_name']);
 
             $importArr = $objPHPExcel->getSheetByName('template')->toArray();
@@ -156,29 +155,44 @@ class Excel extends Common{
                 'model_status', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
                 'screen_size', 'MEMORY', 'HDD', 'cd_rom', 'location', 'remark');
 
-            $statusArray = json_decode(STATUS, true);
-            $departArray = json_decode(DEPART, true);
-            $sectionArray = json_decode(SECTION, true);
-
             // 还是用index来循环比较好.
             for ($i = 2; $i < count($importArr); $i++) {
                 $data = array();
                 for ($j = 0; $j < count($key); $j++) {
-                    $data[$key[$j]] = trim($importArr[$i][$j]);
+                    $data[$key[$j]] = trim($importArr[$i][$j]); // trim 转换null为''
                 }
+                // 如果checkFail会return.
+                $statusArray = json_decode(STATUS, true);
+                $departArray = json_decode(DEPART, true);
+                $sectionArray = json_decode(SECTION, true);
+
+                // 空编号check
+                if (empty($data['fixed_no'] )) {
+                    return apiResponse(SUCCESS, '资产编号不能为空 (第'. ($i + 1) .'行)');
+                }
+
                 // 课转换
                 $keyS = array_search($data['section_manager'], $sectionArray);
                 if ($keyS) {
                     $data['section_manager'] = $keyS;
+                } else {
+                    return apiResponse(SUCCESS, '课填写不正确 (第'. ($i + 1) .'行)');
                 }
                 // 部门转换
                 $keyD = array_search($data['department'], $departArray);
                 if ($keyD) {
                     $data['department'] = $keyD;
+                } else {
+                    return apiResponse(SUCCESS, '部门填写不正确 (第'. ($i + 1) .'行)');
                 }
                 // 状态转换
                 $keySt = array_search($data['model_status'], $statusArray);
-                $data['model_status'] = $keySt; // 不是很需要转换, 0为假; 1以后为真
+                // 判断false
+                if ('boolean' == gettype($keySt) && empty($keySt)) {
+                    return apiResponse(SUCCESS, '状态填写不正确 (第'. ($i + 1) .'行)');
+                }
+
+                $data['model_status'] = $keySt;
                 $data['instore_operator'] = $this->loginUser['ems'];
                 $data['instore_date'] = Db::raw('now()'); // 入库时间
 
@@ -214,14 +228,14 @@ class Excel extends Common{
                 }
 
                 $jsonResult['error'] = $errorArray;
-                return apiResponse(SUCCESS, '错误数据如下, 需要重写填写', $jsonResult);
+                return apiResponse(SUCCESS, '错误或重复数据如下, 需要重写填写', $jsonResult);
             }
 
             // 全部数据插入成功
             if ((count($importArr) - 2) == count($successList)) {
                 $json = array();
                 // 存储邮件表格内容, 需要拿到各个课的负责人, 所以这里再循环一次
-                foreach ($importArr as $key => $item) {
+                foreach ($importArr as $key => $item) { // 这里用importArr其实不怎么好, 会存在数组越界.
                     $tmp = null;
                     if ($key >= 2) {
                         $tmp['id'] = trim($item[0]);
@@ -230,11 +244,11 @@ class Excel extends Common{
                         $tmp['pn'] = trim($item[4]);
                         $tmp['section'] = trim($item[6]);
                         $tmp['remark'] = trim($item[18]);
-                        $tmp['charge'] = trim($_linkArr[$item[6]]);
+                        // 0 , false, null, '' 都为N/A
+                        $tmp['charge'] = trim($item[6]) == '' ? 'N/A' : trim($_linkArr[trim($item[6])]); // 这里很容易出错
                         $json[] = $tmp;
                     }
                 }
-
                 // 插入到邮件表中
                 $mainBody = MailTemplate::getImportNotice();
 
@@ -253,6 +267,7 @@ class Excel extends Common{
         }
 
     }
+
     /**
      * showdoc
      * @catalog 接口文档/EXCEL相关

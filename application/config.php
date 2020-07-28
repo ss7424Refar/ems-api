@@ -248,9 +248,9 @@ return [
         // 数据库类型
         'type'        => 'mysql',
         // 服务器地址
-        'hostname'    => '172.30.52.29',
+        'hostname'    => '172.30.184.29',
         // 数据库名
-        'database'    => 'pcs',
+        'database'    => 'tpms',
         // 数据库用户名
         'username'    => 'root',
         // 数据库密码
@@ -287,7 +287,7 @@ return [
         'sql_explain'     => false
     ],
     // 配置swiftmailer邮件发送服务器
-    'smtp_host'         => '172.30.52.43',
+    'smtp_host'         => '172.30.184.43',
     'smtp_port'         => '25',
     'mail_from'         => 'ems_swv@dbh.dynabook.com',
 //    'mail_cc'           => '["lin.zhu@dbh.dynabook.com", "bin.yan@dbh.dynabook.com"]',

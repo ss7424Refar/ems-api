@@ -114,3 +114,8 @@ delete FROM `ems_main_engine` WHERE  `model_status` = '';
 update ems_main_engine set user_id = null where user_id = '';
 delete from ems_main_engine where fixed_no = '';
 
+-- 总是导出错误, 强制int
+ALTER TABLE `tpms`.`ems_main_engine`
+  CHANGE COLUMN `department` `department` INT(2) NOT NULL COMMENT '部门' ,
+  CHANGE COLUMN `section_manager` `section_manager` INT(5) NOT NULL COMMENT '课长' ,
+  CHANGE COLUMN `model_status` `model_status` INT(1) NOT NULL COMMENT '样机状态' ;
