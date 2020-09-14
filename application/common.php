@@ -20,7 +20,7 @@ function getHttpHeader() {
     $origin = Request::instance()->server('HTTP_ORIGIN');
     $header['Access-Control-Allow-Origin'] = $origin;
     $header['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, DELETE';
-    $header['Access-Control-Allow-Headers'] = 'x-requested-with,content-type,multipart/form-data';
+    $header['Access-Control-Allow-Headers'] = 'x-requested-with,content-type';
     // 携带cookie验证
     $header['Access-Control-Allow-Credentials'] = 'true'; // 一定要是字符串
 

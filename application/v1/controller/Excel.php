@@ -214,7 +214,8 @@ class Excel extends Common{
                     $errorArray['detail'][] = array('id'=>$data['fixed_no'], 'msg'=>$e->getMessage());
                 }
             }
-
+            Log::record('[Excel][import] importArr | successList | errorList = ' .
+                count($importArr). ' | '. count($successList). ' | '. count($errorList));
             // 如果存在失败的数据
             if (!empty($errorList)) {
                 // 需要把之前插入成功的数据删除
