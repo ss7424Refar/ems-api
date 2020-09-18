@@ -118,13 +118,24 @@ class Excel extends Common{
 
         // 导入数据
         $importArr = [];
+        // 新导入数据
+        $newImportArr = [];
         // link sheet
         $linkArr = [];
         // 转换后的links
         $_linkArr = [];
         // 返回结果
         $jsonResult = [];
+        // 插入数据 判断成功与否
+        $successList = []; $errorList = [];
+        // 发送给前端的数据
+        $errorArray = [];
 
+        $statusArray = json_decode(STATUS, true);
+        $departArray = json_decode(DEPART, true);
+        $sectionArray = json_decode(SECTION, true);
+
+        // 读取excel
         try {
             $objReader = IOFactory::createReader('Xlsx');
             $objReader->setReadDataOnly(TRUE);
@@ -137,19 +148,26 @@ class Excel extends Common{
             Log::record('[Excel][import] read error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
-
+        // 上传excel到服务器 (以当前日期为子目录，以微秒时间的md5编码为文件名的文件)
+        $file = request()->file('excel');
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                // 成功上传后 获取上传信息
+                Log::record('[Excel][import] upload file ' . $excel['name']. ' | '. $info->getSaveName());
+            }else{
+                // 上传失败获取错误信息
+                Log::record('[Excel][import] upload error ' . $file->getError());
+                return apiResponse(ERROR, 'server error');
+            }
+        }
+        if (count($importArr) <= 2) {
+            return apiResponse(SUCCESS, '你需要填写至少一行的样品信息');
+        }
+        // 验证并转换数据
         try {
-            foreach ($linkArr as $item) {
-                $_linkArr[$item[0]] = $item[1];
-            }
-            if (count($importArr) <= 2) {
-                return apiResponse(SUCCESS, '你需要填写至少一行的样品信息');
-            }
 
-            // 插入数据 判断成功与否
-            $successList = []; $errorList = [];
-            // 发送给前端的数据
-            $errorArray = [];
             // 定义键名
             $key = array('fixed_no', 'MODEL_NAME', 'category', 'SERIAL_NO', 'type', 'department', 'section_manager',
                 'model_status', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
@@ -161,11 +179,6 @@ class Excel extends Common{
                 for ($j = 0; $j < count($key); $j++) {
                     $data[$key[$j]] = trim($importArr[$i][$j]); // trim 转换null为''
                 }
-                // 如果checkFail会return.
-                $statusArray = json_decode(STATUS, true);
-                $departArray = json_decode(DEPART, true);
-                $sectionArray = json_decode(SECTION, true);
-
                 // 空编号check
                 if (empty($data['fixed_no'] )) {
                     return apiResponse(SUCCESS, '资产编号不能为空 (第'. ($i + 1) .'行)');
@@ -196,74 +209,99 @@ class Excel extends Common{
                 $data['instore_operator'] = $this->loginUser['ems'];
                 $data['instore_date'] = Db::raw('now()'); // 入库时间
 
-                try{
-                    $result = Db::table('ems_main_engine')->insert($data);
+                $newImportArr[] = $data;
+            }
+        } catch (Exception $e) {
+            Log::record('[Excel][import] check error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
 
-                    // 插入失败
-                    if (1 != $result) {
-                        $errorList[] = $data['fixed_no'];
-                        $errorArray['detail'][] = array('id'=>$data['fixed_no'], 'msg'=>'mysql插入行数返回结果不为1');
-                    } else {
-                        $successList[] = $data['fixed_no'];
-                    }
+        Log::record('[Excel][import] importArr | newImportArr = ' .
+            count($importArr). ' | '. count($newImportArr));
 
-                }catch (Exception $e){
-                    Log::record('[Excel][import] insert error' . $e->getMessage());
+        if (0 == count($newImportArr)) {
+            return apiResponse(SUCCESS, '转换后的样品数据行数为0');
+        }
+        // 不大会走这个分支
+        if ((count($importArr) -2) != count($newImportArr)) {
+            return apiResponse(SUCCESS, '转换后的样品数据行数不正确 ('.count($importArr).'/'.
+                count($newImportArr));
+        }
 
+        // 插入数据
+        foreach ($newImportArr as $data) {
+            try {
+                $result = Db::table('ems_main_engine')->insert($data);
+                // 插入失败
+                if (1 != $result) {
                     $errorList[] = $data['fixed_no'];
-                    $errorArray['detail'][] = array('id'=>$data['fixed_no'], 'msg'=>$e->getMessage());
+                    $errorArray['detail'][] = array('id'=>$data['fixed_no'], 'msg'=>'mysql插入行数返回结果不为1');
+                } else {
+                    $successList[] = $data['fixed_no'];
+                }
+            } catch (Exception $e){
+                Log::record('[Excel][import] insert error ' . $e->getMessage());
+
+                $errorList[] = $data['fixed_no'];
+                $errorArray['detail'][] = array('id'=>$data['fixed_no'], 'msg'=>$e->getMessage());
+            }
+        }
+
+        Log::record('[Excel][import] newImportArr | successList | errorList = ' .
+            count($newImportArr). ' | '. count($successList). ' | '. count($errorList));
+
+        // 如果存在失败的数据
+        if (!empty($errorList)) {
+            // 需要把之前插入成功的数据删除
+            foreach ($successList as $item) {
+                try {
+                    Db::table('ems_main_engine')->where('fixed_no', $item)->delete();
+                } catch (Exception $e) {
+                    Log::record('[Excel][import] delete success line error' . $e->getMessage());
+                    return apiResponse(ERROR, 'server error');
                 }
             }
-            Log::record('[Excel][import] importArr | successList | errorList = ' .
-                count($importArr). ' | '. count($successList). ' | '. count($errorList));
-            // 如果存在失败的数据
-            if (!empty($errorList)) {
-                // 需要把之前插入成功的数据删除
-                foreach ($successList as $item) {
-                    try {
-                        Db::table('ems_main_engine')->where('fixed_no', $item)->delete();
-                    } catch (Exception $e) {
-                        Log::record('[Excel][import] delete success line error' . $e->getMessage());
-                        return apiResponse(ERROR, 'server error');
-                    }
-                }
 
-                $jsonResult['error'] = $errorArray;
-                return apiResponse(SUCCESS, '错误或重复数据如下, 需要重写填写', $jsonResult);
+            $jsonResult['error'] = $errorArray;
+            return apiResponse(SUCCESS, '错误或重复数据如下, 需要重写填写', $jsonResult);
+        }
+
+        // 发送邮件
+        try {
+            foreach ($linkArr as $item) {
+                $_linkArr[$item[0]] = $item[1];
             }
 
             // 全部数据插入成功
-            if ((count($importArr) - 2) == count($successList)) {
-                $json = array();
-                // 存储邮件表格内容, 需要拿到各个课的负责人, 所以这里再循环一次
-                foreach ($importArr as $key => $item) { // 这里用importArr其实不怎么好, 会存在数组越界.
-                    $tmp = null;
-                    if ($key >= 2) {
-                        $tmp['id'] = trim($item[0]);
-                        $tmp['name'] = trim($item[1]);
-                        $tmp['sn'] = trim($item[3]);
-                        $tmp['pn'] = trim($item[4]);
-                        $tmp['section'] = trim($item[6]);
-                        $tmp['remark'] = trim($item[18]);
-                        // 0 , false, null, '' 都为N/A
-                        $tmp['charge'] = trim($item[6]) == '' ? 'N/A' : trim($_linkArr[trim($item[6])]); // 这里很容易出错
-                        $json[] = $tmp;
-                    }
-                }
-                // 插入到邮件表中
-                $mainBody = MailTemplate::getImportNotice();
+            $json = array();
+            // 存储邮件表格内容, 需要拿到各个课的负责人, 所以这里再循环一次
+            foreach ($newImportArr as $item) {
 
-                $usr = $this->getUserInfoById($this->loginUser['ems']);
-                // 插入数据
-                $data = ['id'=>null, 'type'=>IMPORT, 'main_body'=>$mainBody, 'subject'=>$subject,
-                    'from'=>$usr['MAIL'], 'to'=>config('mail_import_to'), 'table_data' => json_encode($json)];
-
-                Db::table('ems_mail_queue')->insert($data);
-
-                return apiResponse(SUCCESS, '插入数据成功');
+                $section = $sectionArray[trim($item['section_manager'])];// 这里可能很容易出错
+                $tmp = null;
+                $tmp['id'] = trim($item['fixed_no']);
+                $tmp['name'] = trim($item['MODEL_NAME']);
+                $tmp['sn'] = trim($item['SERIAL_NO']);
+                $tmp['pn'] = trim($item['type']);
+                $tmp['section'] = $section;
+                $tmp['remark'] = trim($item['remark']);
+                // 0 , false, null, '' 都为N/A
+                $tmp['charge'] = trim($_linkArr[$section]);
+                $json[] = $tmp;
             }
+            // 插入到邮件表中
+            $mainBody = MailTemplate::getImportNotice();
+
+            $usr = $this->getUserInfoById($this->loginUser['ems']);
+            // 插入数据
+            $data = ['id'=>null, 'type'=>IMPORT, 'main_body'=>$mainBody, 'subject'=>$subject,
+                'from'=>$usr['MAIL'], 'to'=>config('mail_import_to'), 'table_data' => json_encode($json)];
+
+            Db::table('ems_mail_queue')->insert($data);
+
+            return apiResponse(SUCCESS, '插入数据成功');
         } catch (Exception $e) {
-            Log::record('[Excel][import] error' . $e->getMessage());
+            Log::record('[Excel][import] mail error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
 
