@@ -240,6 +240,7 @@ class Excel extends Common{
                     $successList[] = $data['fixed_no'];
                 }
             } catch (Exception $e){
+                Log::record('[Excel][import] insert error ' . Db::table('ems_main_engine')->getLastSql());
                 Log::record('[Excel][import] insert error ' . $e->getMessage());
 
                 $errorList[] = $data['fixed_no'];

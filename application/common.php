@@ -99,6 +99,10 @@ function getSearchCondition($formData) {
         if (!empty($formData->remark)) {
             $map['remark'] = ['like', '%' . $formData->remark . '%'];
         }
+        // 区分
+        if (!empty($formData->category)) {
+            $map['category'] = $formData->category;
+        }
     }
 
     return $map;
