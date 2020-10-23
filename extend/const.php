@@ -57,3 +57,26 @@ define('EMS_URL', 'http://pcs.dbh.dynabook.com/');
 // email type
 define('FLOW', 'flow');
 define('IMPORT', 'import');
+
+// log record
+define('LOG_DESC_BORROW', '样品申请');
+define('LOG_DESC_DELETE', '样品删除');
+define('LOG_DESC_SCRAPE', '样品报废');
+define('LOG_DESC_ASSIGN', '样品分配');
+define('LOG_DESC_RETURN', '样品归还');
+
+define('LOG_TYPE_CHECK', '审批');
+define('LOG_TYPE_APPLY', '申请');
+
+define('LOG_RESULT_CANCEL', '取消');
+define('LOG_RESULT_REJECT', '拒绝');
+define('LOG_RESULT_APPROVE', '同意');
+define('LOG_RESULT_ADD', '提出');
+
+
+
+
+
+
+
+

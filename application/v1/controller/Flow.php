@@ -63,6 +63,17 @@ class Flow extends Common {
                         $tmp['desc'] = $query['remark'];
 
                         $inputData[$query['section_manager']][] = $tmp;
+
+                        $this->insertLogRecord([
+                            'id'=>null,
+                            'fixed_no'=>$query['fixed_no'],
+                            'desc'=>LOG_DESC_BORROW,
+                            'role'=>$this->loginUser['desc'],
+                            'operator'=>$user,
+                            'type'=>LOG_TYPE_APPLY,
+                            'result'=>LOG_RESULT_ADD,
+                            'time'=>Db::raw('now()')
+                        ]);
                     } else {
                         Log::record('[Flow][borrowApply] update fail ' . $fixed_nos[$i]);
                     }
@@ -140,6 +151,17 @@ class Flow extends Common {
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[] = $tmp;
+
+                            $this->insertLogRecord([
+                                'id'=>null,
+                                'fixed_no'=>$query['fixed_no'],
+                                'desc'=>LOG_DESC_BORROW,
+                                'role'=>$this->loginUser['desc'],
+                                'operator'=>$user['USER_NAME'],
+                                'type'=>LOG_TYPE_CHECK,
+                                'result'=>LOG_RESULT_APPROVE,
+                                'time'=>Db::raw('now()')
+                            ]);
                         } else {
                             Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
@@ -187,6 +209,17 @@ class Flow extends Common {
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[$query['user_id']][] = $tmp;
+
+                            $this->insertLogRecord([
+                                'id'=>null,
+                                'fixed_no'=>$query['fixed_no'],
+                                'desc'=>LOG_DESC_BORROW,
+                                'role'=>$this->loginUser['desc'],
+                                'operator'=>$user['USER_NAME'],
+                                'type'=>LOG_TYPE_CHECK,
+                                'result'=>LOG_RESULT_REJECT,
+                                'time'=>Db::raw('now()')
+                            ]);
                         } else {
                             Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
@@ -284,6 +317,16 @@ class Flow extends Common {
                                Log::record('[Flow][replyBorrowApplyFromSample] add history fail ' . $fixed_nos[$i]);
                            }
 
+                           $this->insertLogRecord([
+                               'id'=>null,
+                               'fixed_no'=>$query['fixed_no'],
+                               'desc'=>LOG_DESC_ASSIGN,
+                               'role'=>$this->loginUser['desc'],
+                               'operator'=>$user['USER_NAME'],
+                               'type'=>LOG_TYPE_CHECK,
+                               'result'=>LOG_RESULT_APPROVE,
+                               'time'=>Db::raw('now()')
+                           ]);
                        } else {
                            Log::record('[Flow][replyBorrowApplyFromSample] update fail ' . $fixed_nos[$i]);
                        }
@@ -332,6 +375,16 @@ class Flow extends Common {
 
                            $inputData[$query['user_id']][] = $tmp;
 
+                           $this->insertLogRecord([
+                               'id'=>null,
+                               'fixed_no'=>$query['fixed_no'],
+                               'desc'=>LOG_DESC_ASSIGN,
+                               'role'=>$this->loginUser['desc'],
+                               'operator'=>$user['USER_NAME'],
+                               'type'=>LOG_TYPE_CHECK,
+                               'result'=>LOG_RESULT_REJECT,
+                               'time'=>Db::raw('now()')
+                           ]);
                        } else {
                            Log::record('[Flow][replyBorrowApplyFromSample] update fail ' . $fixed_nos[$i]);
                        }
@@ -422,6 +475,16 @@ class Flow extends Common {
                             Log::record('[Flow][returnSample] update history fail ' . $fixed_nos[$i]);
                         }
 
+                        $this->insertLogRecord([
+                            'id'=>null,
+                            'fixed_no'=>$query['fixed_no'],
+                            'desc'=>LOG_DESC_RETURN,
+                            'role'=>$this->loginUser['desc'],
+                            'operator'=>$user['USER_NAME'],
+                            'type'=>'-',
+                            'result'=>'-',
+                            'time'=>Db::raw('now()')
+                        ]);
                     } else {
                         Log::record('[Flow][returnSample] update fail ' . $fixed_nos[$i]);
                     }
@@ -501,6 +564,17 @@ class Flow extends Common {
                         $tmp['desc'] = $query['remark'];
 
                         $inputData[$query['section_manager']][] = $tmp;
+
+                        $this->insertLogRecord([
+                            'id'=>null,
+                            'fixed_no'=>$query['fixed_no'],
+                            'desc'=>LOG_DESC_DELETE,
+                            'role'=>$this->loginUser['desc'],
+                            'operator'=>$user,
+                            'type'=>LOG_TYPE_APPLY,
+                            'result'=>LOG_RESULT_ADD,
+                            'time'=>Db::raw('now()')
+                        ]);
                     } else {
                         Log::record('[Flow][deleteApply] update fail ' . $fixed_nos[$i]);
                     }
@@ -571,6 +645,17 @@ class Flow extends Common {
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[] = $tmp;
+
+                            $this->insertLogRecord([
+                                'id'=>null,
+                                'fixed_no'=>$query['fixed_no'],
+                                'desc'=>LOG_DESC_DELETE,
+                                'role'=>$this->loginUser['desc'],
+                                'operator'=>$user['USER_NAME'],
+                                'type'=>LOG_TYPE_CHECK,
+                                'result'=>LOG_RESULT_APPROVE,
+                                'time'=>Db::raw('now()')
+                            ]);
                         } else {
                             Log::record('[Flow][replyDeleteApplyFromSection] delete fail ' . $fixed_nos[$i]);
                         }
@@ -618,6 +703,17 @@ class Flow extends Common {
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[] = $tmp;
+
+                            $this->insertLogRecord([
+                                'id'=>null,
+                                'fixed_no'=>$query['fixed_no'],
+                                'desc'=>LOG_DESC_DELETE,
+                                'role'=>$this->loginUser['desc'],
+                                'operator'=>$user['USER_NAME'],
+                                'type'=>LOG_TYPE_CHECK,
+                                'result'=>LOG_RESULT_REJECT,
+                                'time'=>Db::raw('now()')
+                            ]);
                         } else {
                             Log::record('[Flow][replyDeleteApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
@@ -670,7 +766,6 @@ class Flow extends Common {
             // 给subject用
             $user = $userInfo['USER_NAME'];
             $from = $userInfo['MAIL'];
-            $sectionArray = json_decode(SECTION, true);
 
             // 前端需要把数组变成字符串
             $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
@@ -699,6 +794,17 @@ class Flow extends Common {
                         $tmp['desc'] = $query['remark'];
 
                         $inputData[] = $tmp;
+
+                        $this->insertLogRecord([
+                            'id'=>null,
+                            'fixed_no'=>$query['fixed_no'],
+                            'desc'=>LOG_DESC_SCRAPE,
+                            'role'=>$this->loginUser['desc'],
+                            'operator'=>$user,
+                            'type'=>LOG_TYPE_APPLY,
+                            'result'=>LOG_RESULT_ADD,
+                            'time'=>Db::raw('now()')
+                        ]);
                     } else {
                         Log::record('[Flow][scrapApply] update fail ' . $fixed_nos[$i]);
                     }
@@ -774,6 +880,17 @@ class Flow extends Common {
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[] = $tmp;
+
+                            $this->insertLogRecord([
+                                'id'=>null,
+                                'fixed_no'=>$query['fixed_no'],
+                                'desc'=>LOG_DESC_SCRAPE,
+                                'role'=>$this->loginUser['desc'],
+                                'operator'=>$user['USER_NAME'],
+                                'type'=>LOG_TYPE_CHECK,
+                                'result'=>LOG_RESULT_APPROVE,
+                                'time'=>Db::raw('now()')
+                            ]);
                         } else {
                             Log::record('[Flow][replyScrapApplyFromSample] delete fail ' . $fixed_nos[$i]);
                         }
@@ -821,6 +938,17 @@ class Flow extends Common {
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[] = $tmp;
+
+                            $this->insertLogRecord([
+                                'id'=>null,
+                                'fixed_no'=>$query['fixed_no'],
+                                'desc'=>LOG_DESC_SCRAPE,
+                                'role'=>$this->loginUser['desc'],
+                                'operator'=>$user['USER_NAME'],
+                                'type'=>LOG_TYPE_CHECK,
+                                'result'=>LOG_RESULT_REJECT,
+                                'time'=>Db::raw('now()')
+                            ]);
                         } else {
                             Log::record('[Flow][replyScrapApplyFromSample] update fail ' . $fixed_nos[$i]);
                         }
@@ -869,6 +997,18 @@ class Flow extends Common {
             $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos)
                 ->where('model_status', BORROW_REVIEW)->find();
             if (!empty($query)) {
+
+                $this->insertLogRecord([
+                    'id'=>null,
+                    'fixed_no'=>$query['fixed_no'],
+                    'desc'=>LOG_DESC_BORROW,
+                    'role'=>$this->loginUser['desc'],
+                    'operator'=>$query['user_name'],
+                    'type'=>LOG_TYPE_APPLY,
+                    'result'=>LOG_RESULT_CANCEL,
+                    'time'=>Db::raw('now()')
+                ]);
+
                 // 更新状态
                 $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos)
                     ->where('model_status', BORROW_REVIEW)
@@ -913,6 +1053,23 @@ class Flow extends Common {
                 $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                     ->whereIn('model_status', [DELETE_REVIEW, SCRAP_REVIEW])->find();
                 if (!empty($query)) {
+
+                    if (DELETE_REVIEW == $query['model_status']) {
+                        $desc = LOG_DESC_DELETE;
+                    } else {
+                        $desc = LOG_DESC_SCRAPE;
+                    }
+                    $this->insertLogRecord([
+                        'id'=>null,
+                        'fixed_no'=>$query['fixed_no'],
+                        'desc'=>$desc,
+                        'role'=>$this->loginUser['desc'],
+                        'operator'=>$query['scrap_operator'],
+                        'type'=>LOG_TYPE_APPLY,
+                        'result'=>LOG_RESULT_CANCEL,
+                        'time'=>Db::raw('now()')
+                    ]);
+
                     // 更新状态
                     $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                         ->whereIn('model_status', [DELETE_REVIEW, SCRAP_REVIEW])
@@ -981,4 +1138,14 @@ class Flow extends Common {
         }
     }
 
+    private function insertLogRecord($data) {
+        try {
+            Db::table('ems_log_record')->insert($data);
+
+        } catch (Exception $e) {
+            Log::record('[Flow][insertLogRecord] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+
+    }
 }

@@ -44,7 +44,8 @@ class Common extends Controller {
 
     public function checkCookie(){
         if (config('session_debug')) {
-            $this->loginUser = array('T'=>'admin', 'ems'=>'admin', 'roleId'=>ADMIN, 'section'=>'2271');
+            $this->loginUser = array('T'=>'admin', 'ems'=>'admin', 'roleId'=>ADMIN, 'section'=>'2271',
+                'desc'=>'拯救世界的直男');
         } else {
             if (null == $this->request->server('HTTP_REFERER')) {
                 $result = [
@@ -96,11 +97,18 @@ class Common extends Controller {
                             ];
                             $this->throwJsonException($result);
                         } else {
+                            // 查询role-desc给log_record用
+                            $role = Db::table('roles')->field('notes')
+                                        ->where('id', $t_user['role_id'])->find();
+                            $desc = str_replace('</p>', '',
+                                        str_replace('<p>', '', (empty($role['notes']) ? '': $role['notes'])));
+
                             $this->loginUser = array(
                                 'T'=>$t_user['login'],
                                 'ems'=>$ems_user['USER_ID'],
                                 'roleId'=>$t_user['role_id'],
-                                'section'=>$ems_user['SECTION']
+                                'section'=>$ems_user['SECTION'],
+                                'desc'=>$desc
                             );
 
                             Log::record('hello! ['. $ems_user['USER_ID']. '] ' . $ems_user['USER_NAME']);
