@@ -44,9 +44,12 @@ class MailMan {
                 if (FLOW == $item['type']) {
                     $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
                     $cc = config('mail_cc');
-                } else {
+                } elseif (IMPORT == $item['type']) {
                     $content = MailTemplate::getImportContent($item['main_body'], $item['table_data']);
                     $cc = config('mail_import_cc');
+                } elseif (APPLY == $item['type']) {
+                    $content = MailTemplate::getApplyContent($item['main_body'], $item['table_data']);
+                    $cc = config('mail_cc');
                 }
 
                 Log::record($content);

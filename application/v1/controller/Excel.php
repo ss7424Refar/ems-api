@@ -293,10 +293,10 @@ class Excel extends Common{
             // 插入到邮件表中
             $mainBody = MailTemplate::getImportNotice();
 
-            $usr = $this->getUserInfoById($this->loginUser['ems']);
+//            $usr = $this->getUserInfoById($this->loginUser['ems']);
             // 插入数据
             $data = ['id'=>null, 'type'=>IMPORT, 'main_body'=>$mainBody, 'subject'=>$subject,
-                'from'=>$usr['MAIL'], 'to'=>config('mail_import_to'), 'table_data' => json_encode($json)];
+                'from'=>config('mail_import_from'), 'to'=>config('mail_import_to'), 'table_data' => json_encode($json)];
 
             Db::table('ems_mail_queue')->insert($data);
 

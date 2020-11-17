@@ -294,9 +294,9 @@ return [
 //    'mail_cc'           => '["lin.zhu@dbh.dynabook.com"]',
     'mail_cc'           => '[]',
 
-
-    'mail_import_cc'           => '["Design_SWT@dbh.dynabook.com", "Design_DT@dbh.dynabook.com"]',
-    'mail_import_to'           => '["yuanjin.chen@dbh.dynabook.com", "Daoqi.Zhang@dbh.dynabook.com", "jianzhong.yu@dbh.dynabook.com"]',
+    'mail_import_from'         => 'ems_admin@dbh.dynabook.com',
+    'mail_import_to'           => '["Design_SWT@dbh.dynabook.com", "Design_DT@dbh.dynabook.com"]',
+    'mail_import_cc'           => '[]',
     'mail_header_subject'      => '',
 
     // +----------------------------------------------------------------------

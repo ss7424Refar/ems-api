@@ -20,6 +20,7 @@ class Flow extends Common {
      * @description 样品借出
      * @method get
      * @param fixed_nos 必选 string fixed_nos=[]
+     * @param predictDate 必选 date 预计归还时间
      * @return {"status":0,"msg":"[Flow][borrowApply] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/borrowApply
      * @remark 1.样品申请人->课长; 2.返回状态1代表失败
@@ -38,6 +39,7 @@ class Flow extends Common {
 
             // 前端需要把数组变成字符串
             $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
+            $predictDate = $this->request->param('predictDate'); // 预计归还时间
 
             // 需要插入的数据
             $inputData = array();
@@ -53,13 +55,15 @@ class Flow extends Common {
                         ->update([
                             'user_name'    => $user,
                             'user_id'      => $userId,
-                            'model_status' => BORROW_REVIEW
+                            'model_status' => BORROW_REVIEW,
+                            'predict_date'  => $predictDate
                         ]);
 
                     // 更新成功
                     if (1 == $res) {
                         $tmp['id'] = $query['fixed_no'];
                         $tmp['name'] = $query['MODEL_NAME'];
+                        $tmp['predictDate'] = $predictDate;
                         $tmp['desc'] = $query['remark'];
 
                         $inputData[$query['section_manager']][] = $tmp;
@@ -90,7 +94,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getBorrowApply($section, $user);
 
                     // 插入数据
-                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>APPLY, 'main_body'=>$mainBody, 'subject'=>$subject,
                              'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($value)];
                     Db::table('ems_mail_queue')->insert($data);
                 }
@@ -148,6 +152,8 @@ class Flow extends Common {
                         if (1 == $res) {
                             $tmp['id'] = $query['fixed_no'];
                             $tmp['name'] = $query['MODEL_NAME'];
+                            $tmp['predictDate'] = empty($query['predict_date']) ? ' - ' :
+                                date("Y-m-d", strtotime($query['predict_date']));
                             $tmp['desc'] = $query['remark'];
 
                             $inputData[] = $tmp;
@@ -177,7 +183,7 @@ class Flow extends Common {
                     $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSection();
 
                     // 插入数据
-                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
+                    $data = ['id'=>null, 'type'=>APPLY, 'main_body'=>$mainBody, 'subject'=>$subject,
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
 
                     $res = Db::table('ems_mail_queue')->insert($data);
@@ -200,7 +206,8 @@ class Flow extends Common {
                             ->update([
                                 'user_name'    => null,
                                 'user_id'      => null,
-                                'model_status' => IN_STORE
+                                'model_status' => IN_STORE,
+                                'predict_date'  => null
                             ]);
 
                         if (1 == $res) {
@@ -258,7 +265,6 @@ class Flow extends Common {
      * @method get
      * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
-     * @param predictDate 必选 date 预计归还时间
      * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSample] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/replyBorrowApplyFromSample
      * @remark 1.样品管理员->同意/拒绝; 2.返回状态1代表失败
@@ -268,7 +274,7 @@ class Flow extends Common {
            $userId = $this->loginUser['ems'];
 
            $judge = $this->request->param('judge');
-           $predictDate = $this->request->param('predictDate'); // 预计归还时间
+
            $fixed_nos = json_decode($this->request->param('fixed_nos'));
 
            $user = $this->getUserInfoById($userId);
@@ -284,13 +290,14 @@ class Flow extends Common {
                        $res = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                            ->where('model_status', ASSIGNING)
                            ->update([
-                               'predict_date'  => $predictDate,
                                'model_status' => USING
                            ]);
 
                        if (1 == $res) {
                            $tmp['id'] = $query['fixed_no'];
                            $tmp['name'] = $query['MODEL_NAME'];
+                           $tmp['predictDate'] = empty($query['predict_date']) ? ' - ' :
+                               date("Y-m-d", strtotime($query['predict_date']));
                            $tmp['desc'] = $query['remark'];
 
                            $inputData[$query['user_id']][] = $tmp;
@@ -342,7 +349,7 @@ class Flow extends Common {
                        $mainBody = MailTemplate::getReplyApproveBorrowApplyFromSample($to['USER_NAME']);
 
                        // 插入数据
-                       $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
+                       $data = ['id'=>null, 'type'=>APPLY, 'main_body'=>$mainBody, 'subject'=>$subject,
                            'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])),
                            'table_data' => json_encode($value)];
 
@@ -366,6 +373,7 @@ class Flow extends Common {
                                'approve_date'  => null,
                                'approver_name'  => null,
                                'model_status' => IN_STORE,
+                               'predict_date'  => null
                            ]);
 
                        if (1 == $res) {
@@ -1015,7 +1023,8 @@ class Flow extends Common {
                     ->update([
                         'user_name'    => null,
                         'user_id'      => null,
-                        'model_status' => IN_STORE
+                        'model_status' => IN_STORE,
+                        'predict_date'  => null
                     ]);
 
                 // 更新不成功
