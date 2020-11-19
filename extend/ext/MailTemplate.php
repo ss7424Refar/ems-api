@@ -160,6 +160,20 @@ class MailTemplate {
             '</html>';
     }
 
+    public static function getRejectContent($mainBody, $tables) {
+
+        return '<html charset="utf-8">'.
+            '    <head>'.
+            self::getCSSStyle().
+            '    </head>'.
+            '    <body>'.
+            $mainBody.
+            self::getRejectTableData($tables).
+            self::getFooter().
+            '    </body>'.
+            '</html>';
+    }
+
     private static function getTableData($json) {
         $tab = json_decode($json, true);
 
@@ -241,6 +255,34 @@ class MailTemplate {
                 '	 <td>'. $tab[$i]['id'] .'</td>'.
                 '	 <td>'. $tab[$i]['name'] .'</td>'.
                 '	 <td>'. $tab[$i]['predictDate'] .'</td>'.
+                '	 <td>'. $tab[$i]['desc'] .'</td>'.
+                '</tr>';
+        }
+
+        return  '<table id="customers">' .
+            $tables.
+            '</table>';
+    }
+
+    private static function getRejectTableData($json) {
+        $tab = json_decode($json, true);
+
+        $tables = '<tr>'.
+            '  <th>样品编号</th>'.
+            '  <th>样品名称</th>'.
+            '  <th>拒绝原因</th>'.
+            '  <th>备注</th>'.
+            '</tr>';
+        for($i = 0; $i < count($tab); $i++) {
+            if ($i % 2 == 0) {
+                $tables = $tables.'<tr class="alt">';
+            } else {
+                $tables = $tables.'<tr class="">';
+            }
+            $tables = $tables.
+                '	 <td>'. $tab[$i]['id'] .'</td>'.
+                '	 <td>'. $tab[$i]['name'] .'</td>'.
+                '	 <td>'. $tab[$i]['rejectReason'] .'</td>'.
                 '	 <td>'. $tab[$i]['desc'] .'</td>'.
                 '</tr>';
         }

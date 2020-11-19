@@ -20,7 +20,7 @@ class LogRecord extends Common {
      * @description 以样机编号查询操作记录接口
      * @method get
      * @param fixed_no 必选 int 样机编号
-     * @return {"status":0,"msg":"[LogRecord][getRecordById] success","data":{"total":1,"rows":[{"fixed_no":"1002044","desc":"样品申请","role":"测试主管","operator":"何兰英","type":"申请","result":"同意","time":"2020-10-21 13:50:41"}]}}
+     * @return {"status":0,"msg":"[LogRecord][getRecordById] success","data":{"total":1,"rows":[{"fixed_no":"1002044","desc":"样品申请","role":"测试主管","operator":"何兰英","type":"申请","result":"同意","reason":null,"time":"2020-10-21 13:50:41"}]}}
      * @url http://domain/ems-api/v1/LogRecord/getRecordById
      * @return_param fixed_no string 编号
      * @return_param desc string 操作内容
@@ -28,6 +28,7 @@ class LogRecord extends Common {
      * @return_param operator string 操作者
      * @return_param type string 类型
      * @return_param result string 结果
+     * @return_param reason string 原因说明
      * @return_param time date 时间
      * @remark 超过5条显示下拉框
      */

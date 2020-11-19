@@ -40,16 +40,17 @@ class MailMan {
                 ->where('to', '<>', '[null]')->whereNotNull('from')
                 ->order('id')->select();
 
+            $cc = config('mail_cc');
+
             foreach ($res as $key => $item) {
                 if (FLOW == $item['type']) {
                     $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
-                    $cc = config('mail_cc');
                 } elseif (IMPORT == $item['type']) {
                     $content = MailTemplate::getImportContent($item['main_body'], $item['table_data']);
-                    $cc = config('mail_import_cc');
                 } elseif (APPLY == $item['type']) {
                     $content = MailTemplate::getApplyContent($item['main_body'], $item['table_data']);
-                    $cc = config('mail_cc');
+                } elseif (REJECT == $item['type']) {
+                    $content = MailTemplate::getRejectContent($item['main_body'], $item['table_data']);
                 }
 
                 Log::record($content);

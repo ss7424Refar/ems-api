@@ -116,6 +116,7 @@ class Flow extends Common {
      * @method get
      * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
+     * @param reason 必选 string
      * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSection] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/replyBorrowApplyFromSection
      * @remark 1.课长->同意/拒绝; 2.返回状态1代表失败
@@ -195,6 +196,8 @@ class Flow extends Common {
                 }
 
             } else {
+
+                $reason = $this->request->param('reason'); // 拒绝原因
                 // 更新状态到在库
                 for ($i = 0; $i < count($fixed_nos); $i++) {
                     $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
@@ -214,6 +217,7 @@ class Flow extends Common {
                             $tmp['id'] = $query['fixed_no'];
                             $tmp['name'] = $query['MODEL_NAME'];
                             $tmp['desc'] = $query['remark'];
+                            $tmp['rejectReason'] = $reason;
 
                             $inputData[$query['user_id']][] = $tmp;
 
@@ -225,6 +229,7 @@ class Flow extends Common {
                                 'operator'=>$user['USER_NAME'],
                                 'type'=>LOG_TYPE_CHECK,
                                 'result'=>LOG_RESULT_REJECT,
+                                'reason'=>$reason,
                                 'time'=>Db::raw('now()')
                             ]);
                         } else {
@@ -242,7 +247,7 @@ class Flow extends Common {
                         $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSection($to['USER_NAME']);
 
                         // 插入数据
-                        $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
+                        $data = ['id'=>null, 'type'=>REJECT, 'main_body'=>$mainBody, 'subject'=>$subject,
                                 'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
                                 'table_data' => json_encode($value)];
 
@@ -265,6 +270,7 @@ class Flow extends Common {
      * @method get
      * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
+     * @param reason 必选 string
      * @return {"status":0,"msg":"[Flow][replyBorrowApplyFromSample] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/replyBorrowApplyFromSample
      * @remark 1.样品管理员->同意/拒绝; 2.返回状态1代表失败
@@ -358,6 +364,8 @@ class Flow extends Common {
                    return apiResponse(SUCCESS, '[Flow][replyBorrowApplyFromSample] success');
                }
            } else {
+
+               $reason = $this->request->param('reason'); // 拒绝原因
                for ($i = 0; $i < count($fixed_nos); $i++) {
                    $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                        ->where('model_status', ASSIGNING)->find();
@@ -379,6 +387,7 @@ class Flow extends Common {
                        if (1 == $res) {
                            $tmp['id'] = $query['fixed_no'];
                            $tmp['name'] = $query['MODEL_NAME'];
+                           $tmp['rejectReason'] = $reason;
                            $tmp['desc'] = $query['remark'];
 
                            $inputData[$query['user_id']][] = $tmp;
@@ -391,6 +400,7 @@ class Flow extends Common {
                                'operator'=>$user['USER_NAME'],
                                'type'=>LOG_TYPE_CHECK,
                                'result'=>LOG_RESULT_REJECT,
+                               'reason'=>$reason,
                                'time'=>Db::raw('now()')
                            ]);
                        } else {
@@ -407,7 +417,7 @@ class Flow extends Common {
                        $mainBody = MailTemplate::getReplyRejectBorrowApplyFromSample($to['USER_NAME']);
 
                        // 插入数据
-                       $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
+                       $data = ['id'=>null, 'type'=>REJECT, 'main_body'=>$mainBody, 'subject'=>$subject,
                            'from'=>$user['MAIL'], 'to'=>json_encode(array($to['MAIL'])), // 定时任务判断是数组
                            'table_data' => json_encode($value)];
 

@@ -58,6 +58,7 @@ define('EMS_URL', 'http://pcs.dbh.dynabook.com/');
 define('FLOW', 'flow');
 define('IMPORT', 'import');
 define('APPLY', 'apply');
+define('REJECT', 'reject');
 
 // log record
 define('LOG_DESC_BORROW', '样品申请');
