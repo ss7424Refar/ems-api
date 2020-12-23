@@ -67,6 +67,9 @@ function getSearchCondition($formData) {
         } elseif (null != $formData->status) {
             $map['model_status'] = $formData->status;
         }
+        if (!empty($formData->broken)) {
+            $map['broken'] = ($formData->broken == 'Y') ? 1 : 0;
+        }
         if (!empty($formData->depart)) {
             $map['department'] = $formData->depart;
         }
@@ -118,6 +121,7 @@ function getFormArray($formData) {
         foreach ($formData as $key => $value) {
             $data[$key] = $value;
         }
+        $data['broken'] = $data['broken'] == 'Y' ? 1 : 0;
     }
 
     return $data;
@@ -128,11 +132,13 @@ function itemChange($list) {
     $statusArray = json_decode(STATUS, true);
     $departArray = json_decode(DEPART, true);
     $sectionArray = json_decode(SECTION, true);
+    $brokenArray = json_decode(BROKEN, true);
 
     foreach ($list as $key => $row) {
         $list[$key]['model_status'] = $statusArray[$row['model_status']];
         $list[$key]['department'] = $departArray[$row['department']];
         $list[$key]['section_manager'] = $sectionArray[$row['section_manager']];
+        $list[$key]['broken'] = $brokenArray[$list[$key]['broken']];
     }
     return $list;
 }

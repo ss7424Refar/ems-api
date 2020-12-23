@@ -26,15 +26,11 @@ class MailMan {
         try {
             Log::record('[MailMan] start');
 
-//            $resE = Db::table('ems_mail_queue')->whereIn('to', ['[]', '[null]'])
-//                ->whereOr('from', null)->select();
-//
-//            // 如果存在垃圾数据, 发送邮件给自己
-//            if (!empty($resE)) {
-//                Log::record('ems_queue has error');
-//                self::send(config('mail_from'), ["lin.zhu@dbh.dynabook.com"], '[]',
-//                    'ems_queue has error', 'ems_queue has error! please check!');
-//            }
+            // 自动重连
+            config('database.break_reconnect', true);
+            Db::Connect(config('database.'));
+
+            Log::record('[MailMan][DbConfig] '. json_encode(config('database')));
 
             $res = Db::table('ems_mail_queue')->where('to', '<>', '[]')
                 ->where('to', '<>', '[null]')->whereNotNull('from')
@@ -42,6 +38,7 @@ class MailMan {
 
             $cc = config('mail_cc');
 
+            $content = '';
             foreach ($res as $key => $item) {
                 if (FLOW == $item['type']) {
                     $content = MailTemplate::getContent($item['main_body'], $item['table_data']);
@@ -66,12 +63,10 @@ class MailMan {
                     }
                 } catch (Swift_RfcComplianceException $e) {
                     Log::record('[MailMan][dog] fail ' .$item['id'] .' '.$e->getMessage());
-//                    self::send(config('mail_from'), ["lin.zhu@dbh.dynabook.com"], '[]',
-//                        'ems_queue has error', 'ems_queue has error! please check!');
                 }
             }
         } catch (Exception $e) {
-            Log::record('[MailMan][dog] error' . $e->getMessage());
+            Log::record('[MailMan][dog] error ' . $e->getMessage());
         }
 
         Log::record('[MailMan] end');

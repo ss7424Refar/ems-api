@@ -55,3 +55,35 @@ CREATE TABLE `tpms`.`ems_const` (
   PRIMARY KEY (`id`));
 
 UPDATE `tpms`.`ems_user` SET `MAIL`='yuanjin.chen@dbh.dynabook.com' WHERE `ID`='1';
+
+
+-- +---------------------------------------------------------------------------------
+-- + beautiful line
+-- +---------------------------------------------------------------------------------
+
+-- ems_log_record.sql
+CREATE TABLE `tpms`.`ems_log_record` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `fixed_no` VARCHAR(20) NULL,
+  `desc` VARCHAR(45) NULL,
+  `role` VARCHAR(50) NULL,
+  `operator` VARCHAR(45) NULL,
+  `type` VARCHAR(15) NULL,
+  `result` VARCHAR(15) NULL,
+  `time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+
+
+-- ems_log_record_add_reason.sql
+ALTER TABLE `tpms`.`ems_log_record`
+  ADD COLUMN `reason` VARCHAR(80) NULL DEFAULT NULL AFTER `result`;
+
+
+-- Add broken to main machine
+ALTER TABLE `tpms`.`ems_main_engine`
+  ADD COLUMN `broken` INT(1) NULL DEFAULT 0 COMMENT '损坏' AFTER `remark`;
+
+-- update broken to 1
+update `tpms`.`ems_main_engine`
+set broken = 1
+where remark like '%坏%';

@@ -83,6 +83,8 @@ class Excel extends Common{
             // 生成csv
             foreach ($list as $row) {
                 $item = [];
+                // 替换备注中的回车
+                $row['remark'] = str_replace(PHP_EOL, '\r\n', $row['remark']);
                 foreach ($row as $value) {
                     $item[] = mb_convert_encoding($value,'GBK','UTF-8');
                 }
@@ -170,7 +172,7 @@ class Excel extends Common{
 
             // 定义键名
             $key = array('fixed_no', 'MODEL_NAME', 'category', 'SERIAL_NO', 'type', 'department', 'section_manager',
-                'model_status', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
+                 'model_status', 'broken', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
                 'screen_size', 'MEMORY', 'HDD', 'cd_rom', 'location', 'remark');
 
             // 还是用index来循环比较好.
@@ -204,10 +206,14 @@ class Excel extends Common{
                 if ('boolean' == gettype($keySt) && empty($keySt)) {
                     return apiResponse(SUCCESS, '状态填写不正确 (第'. ($i + 1) .'行)');
                 }
-
+                // 损坏check
+                if (empty($data['broken'] )) {
+                    return apiResponse(SUCCESS, '损坏不能为空 (第'. ($i + 1) .'行)');
+                }
                 $data['model_status'] = $keySt;
                 $data['instore_operator'] = $this->loginUser['ems'];
                 $data['instore_date'] = Db::raw('now()'); // 入库时间
+                $data['broken'] = $data['broken'] == 'Y' ? 1 : 0;
 
                 $newImportArr[] = $data;
             }
