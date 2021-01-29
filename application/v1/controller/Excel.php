@@ -53,7 +53,7 @@ class Excel extends Common{
             header('Cache-Control: must-revalidate');
 
             $fp = fopen('php://output', 'a');
-            mb_convert_variables('GBK', 'UTF-8', $column);
+//            mb_convert_variables('GBK', 'UTF-8', $column);
 
             fputcsv($fp, $column);
 
@@ -66,8 +66,7 @@ class Excel extends Common{
                 } else {
                     // 先查询ems_borrow_history
                     $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
-                        ->where('user_name', $map['historyUser'])->buildSql();
-
+                        ->where('user_name', $map['historyUser'][0], $map['historyUser'][1])->buildSql();
                     // 移除数组
                     unset($map['historyUser']);
                     $sqlB = Db::table('ems_main_engine')->where($map)->buildSql();
