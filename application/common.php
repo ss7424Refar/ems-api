@@ -94,6 +94,10 @@ function getSearchCondition($formData) {
         if (!empty($formData->serial_number)) {
             $map['serial_number'] = ['like', '%' . $formData->serial_number . '%'];
         }
+        // 是否免3c
+        if (!empty($formData->three_c_flag)) {
+            $map['three_c_flag'] = ($formData->three_c_flag == 'Y') ? 1 : 0;
+        }
         // 发票号
         if (!empty($formData->invoice_no)) {
             $map['invoice_no'] = ['like', '%' . $formData->invoice_no . '%'];
@@ -107,7 +111,6 @@ function getSearchCondition($formData) {
             $map['category'] = $formData->category;
         }
     }
-
     return $map;
 
 }
@@ -122,6 +125,7 @@ function getFormArray($formData) {
             $data[$key] = $value;
         }
         $data['broken'] = $data['broken'] == 'Y' ? 1 : 0;
+        $data['three_c_flag'] = $data['three_c_flag'] == 'Y' ? 1 : 0;
     }
 
     return $data;
@@ -129,18 +133,34 @@ function getFormArray($formData) {
 
 
 function itemChange($list) {
+    foreach ($list as $key => $row) {
+        $row = exportChange($row);
+        $list[$key]['model_status'] =  $row['model_status'];
+        $list[$key]['department'] = $row['department'];
+        $list[$key]['section_manager'] = $row['section_manager'];
+        $list[$key]['broken'] = $row['broken'];
+        $list[$key]['three_c_flag'] = $row['three_c_flag'];
+        $list[$key]['reject_flag'] = $row['reject_flag'];
+    }
+    return $list;
+}
+// 这里是为了导出只有一次循环才加的.
+function exportChange($row) {
     $statusArray = json_decode(STATUS, true);
     $departArray = json_decode(DEPART, true);
     $sectionArray = json_decode(SECTION, true);
     $brokenArray = json_decode(BROKEN, true);
+    $threeArray = json_decode(THREE_C, true);
+    $rejectArray = json_decode(REJECT_FLAG, true);
 
-    foreach ($list as $key => $row) {
-        $list[$key]['model_status'] = $statusArray[$row['model_status']];
-        $list[$key]['department'] = $departArray[$row['department']];
-        $list[$key]['section_manager'] = $sectionArray[$row['section_manager']];
-        $list[$key]['broken'] = $brokenArray[$list[$key]['broken']];
-    }
-    return $list;
+    $row['model_status'] =  $statusArray[$row['model_status']];
+    $row['department'] = $departArray[$row['department']];
+    $row['section_manager'] = $sectionArray[$row['section_manager']];
+    $row['broken'] = $brokenArray[$row['broken']];
+    $row['three_c_flag'] = $threeArray[$row['three_c_flag']];
+    $row['reject_flag'] = $rejectArray[$row['reject_flag']];
+
+    return $row;
 }
 
 function getColumns($type) {

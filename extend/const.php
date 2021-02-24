@@ -19,11 +19,12 @@ define('TIMEOUT', 2);
 
 define('SECTION', json_encode(array('1884' => 'SCD', '2271' => 'SWV', '2272' => 'PSD', '2273' => 'CUD',
     '2274' => 'FWD', '442' => 'SYD', '462' => 'HWD', '485' => 'MED',
-    '491' => 'CSV', '499' => 'HWV', '520' => 'PAV', '540' => 'SSD', '2020'=>'FATN', '2021'=>'PSO')));
+    '491' => 'CSV', '499' => 'HWV', '520' => 'PAV', '540' => 'SSD', '2020'=>'FATN', '2021'=>'PSO', '2022'=>'市场保守课', '2023'=>'Design')));
 
 define('STATUS', json_encode(array('在库', '待借出审批', '待分配', '使用中', '待报废审批', '已报废',
     '待删除审批')));
-define('DEPART', json_encode(array('29' => 'DT部', '33' => 'VT部', '37' => 'SWT部', '41' => 'NPI部', '45' => '总经办')));
+define('DEPART', json_encode(array('29' => 'DT部', '33' => 'VT部', '37' => 'SWT部', '41' => 'NPI部', '45' => '总经办', 
+	'49' => '品证部', '53' => 'DBT')));
 
 
 define('LINKS', json_encode(array(
@@ -31,10 +32,14 @@ define('LINKS', json_encode(array(
         '33' => array('520' => 'PAV'),
         '37' => array('1884' => 'SCD', '2271' => 'SWV', '2272' => 'PSD', '2274' => 'FWD', '491' => 'CSV', '540' => 'SSD'),
         '41' => array('2020'=>'FATN'),
-        '45' => array('2021'=>'PSO'))
+        '45' => array('2021'=>'PSO'),
+        '49' => array('2022'=>'市场保守课'),
+        '53' => array('2023'=>'Design'))
 ));
 
 define('BROKEN', json_encode(array('', '损坏')));
+define('THREE_C', json_encode(array('否', '是')));
+define('REJECT_FLAG', json_encode(array('无', '有')));
 
 // 更新字段时为了看懂用到状态
 define('IN_STORE', 0);

@@ -44,8 +44,16 @@ class Common extends Controller {
 
     public function checkCookie(){
         if (config('session_debug')) {
-            $this->loginUser = array('T'=>'admin', 'ems'=>'admin', 'roleId'=>ADMIN, 'section'=>'2271',
-                'desc'=>'拯救世界的直男');
+            // 读取配置文件
+            $roleFile = RUNTIME_PATH. 'roleId.txt';
+            if (file_exists($roleFile)) {
+                $roleId = file_get_contents($roleFile);
+                $this->loginUser = array('T'=>'admin', 'ems'=>'admin', 'roleId'=>$roleId, 'section'=>'2271',
+                    'desc'=>'拯救世界的直男');
+            } else {
+                $this->loginUser = array('T'=>'admin', 'ems'=>'admin', 'roleId'=>ADMIN, 'section'=>'2271',
+                    'desc'=>'拯救世界的直男');
+            }
         } else {
             if (null == $this->request->server('HTTP_REFERER')) {
                 $result = [

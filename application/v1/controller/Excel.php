@@ -25,18 +25,19 @@ class Excel extends Common{
      * @method get
      * @param formData 单选 json formData:{}(checkbox没有勾选)
      * @param fixed_nos 单选 string fixed_nos:[]
+     * @param myApply 单选 boolean myApply:true /false
      * @return 无
      * @url http://domain/ems-api/v1/Excel/export
      * @remark `别问, 问就是尽力导成了csv; 例子: let formData = JSON.stringify(this.form); window.location.href = process.env.VUE_APP_BASE_API + '/services/MachineSever/outputExcel?formData={}`
      */
     public function export() {
         set_time_limit(0);
-        ini_set('memory_limit', '500M');
+        ini_set('memory_limit', '500M'); // 增加字段后需要修改内存大小, 否则跳转下载出错
 
         $formData = $this->request->param('formData');
         $map = getSearchCondition($formData);
-
         $fixed_nos = $this->request->param('fixed_nos'); // checkedList
+        $myApply = $this->request->param('myApply'); // 我的借出申请
 
         try {
             // 列名
@@ -61,31 +62,40 @@ class Excel extends Common{
             if ($fixed_nos) {
                 $list = Db::table('ems_main_engine')->whereIn('fixed_no', json_decode($fixed_nos))->select();
             } else {
-                if (empty($map['historyUser'])) {
-                    $list = Db::table('ems_main_engine')->where($map)->order('instore_date desc')->select();
+                // 一般给个check
+                if ($myApply == 'check') {
+                    $list = Db::table('ems_main_engine')->where('model_status',BORROW_REVIEW)
+                        ->where('user_id', $this->loginUser['ems'])->order('instore_date desc')->select();
                 } else {
-                    // 先查询ems_borrow_history
-                    $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
-                        ->where('user_name', $map['historyUser'][0], $map['historyUser'][1])->buildSql();
-                    // 移除数组
-                    unset($map['historyUser']);
-                    $sqlB = Db::table('ems_main_engine')->where($map)->buildSql();
+                    if (empty($map['historyUser'])) {
+                        $list = Db::table('ems_main_engine')->where($map)->order('instore_date desc')->select();
+                    } else {
+                        // 先查询ems_borrow_history
+                        $sqlA = Db::table('ems_borrow_history')->distinct(true)->field('fixed_no')
+                            ->where('user_name', $map['historyUser'][0], $map['historyUser'][1])->buildSql();
+                        // 移除数组
+                        unset($map['historyUser']);
+                        $sqlB = Db::table('ems_main_engine')->where($map)->buildSql();
 
-                    // 查询
-                    $list = Db::table($sqlA . ' a')
-                        ->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')
-                        ->order('instore_date desc')
-                        ->select();
+                        // 查询
+                        $list = Db::table($sqlA . ' a')
+                            ->join([$sqlB=> 'b'], 'a.fixed_no=b.fixed_no')
+                            ->order('instore_date desc')
+                            ->select();
+                    }
                 }
+
             }
-            $list = itemChange($list);
             // 生成csv
             foreach ($list as $row) {
+                $row = exportChange($row);
                 $item = [];
                 // 替换备注中的回车
                 $row['remark'] = str_replace(PHP_EOL, '\r\n', $row['remark']);
                 foreach ($row as $value) {
+                    // 其实是不用转换的， 正式上有bug.
                     $item[] = mb_convert_encoding($value,'GBK','UTF-8');
+//                    $item[] = $value;
                 }
 
                 fputcsv($fp, $item);
@@ -171,8 +181,8 @@ class Excel extends Common{
 
             // 定义键名
             $key = array('fixed_no', 'MODEL_NAME', 'category', 'SERIAL_NO', 'type', 'department', 'section_manager',
-                 'model_status', 'broken', 'actual_price', 'tax_inclusive_price', 'invoice_no', 'serial_number', 'CPU',
-                'screen_size', 'MEMORY', 'HDD', 'cd_rom', 'location', 'remark');
+                 'model_status', 'broken', 'actual_price', 'tax_inclusive_price', 'three_c_flag', 'three_c_code',
+                'invoice_no', 'serial_number', 'CPU', 'screen_size', 'MEMORY', 'HDD', 'cd_rom', 'location', 'remark');
 
             // 还是用index来循环比较好.
             for ($i = 2; $i < count($importArr); $i++) {
@@ -209,10 +219,15 @@ class Excel extends Common{
                 if (empty($data['broken'] )) {
                     return apiResponse(SUCCESS, '损坏不能为空 (第'. ($i + 1) .'行)');
                 }
+                if (empty($data['three_c_flag'])) {
+                    return apiResponse(SUCCESS, '是否免3c不能为空 (第'. ($i + 1) .'行)');
+                }
+
                 $data['model_status'] = $keySt;
                 $data['instore_operator'] = $this->loginUser['ems'];
                 $data['instore_date'] = Db::raw('now()'); // 入库时间
                 $data['broken'] = $data['broken'] == 'Y' ? 1 : 0;
+                $data['three_c_flag'] = $data['three_c_flag'] == 'Y' ? 1 : 0;
 
                 $newImportArr[] = $data;
             }

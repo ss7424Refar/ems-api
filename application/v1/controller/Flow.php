@@ -232,6 +232,8 @@ class Flow extends Common {
                                 'reason'=>$reason,
                                 'time'=>Db::raw('now()')
                             ]);
+                            // 有借出拒绝记录添加
+                            $this->updateRejectFlag($query['fixed_no']);
                         } else {
                             Log::record('[Flow][replyBorrowApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
@@ -403,6 +405,7 @@ class Flow extends Common {
                                'reason'=>$reason,
                                'time'=>Db::raw('now()')
                            ]);
+                           $this->updateRejectFlag($query['fixed_no']);
                        } else {
                            Log::record('[Flow][replyBorrowApplyFromSample] update fail ' . $fixed_nos[$i]);
                        }
@@ -1163,6 +1166,17 @@ class Flow extends Common {
 
         } catch (Exception $e) {
             Log::record('[Flow][insertLogRecord] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+
+    }
+
+    private function updateRejectFlag($fixed_no) {
+        try {
+            Db::table('ems_main_engine')->where('fixed_no', $fixed_no)->update(['reject_flag' => '1']);
+
+        } catch (Exception $e) {
+            Log::record('[Flow][updateRejectFlag] error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
 

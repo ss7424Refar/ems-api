@@ -87,3 +87,38 @@ ALTER TABLE `tpms`.`ems_main_engine`
 update `tpms`.`ems_main_engine`
 set broken = 1
 where remark like '%坏%';
+
+-- 修改实际价格、含税价格可以编辑成美元/日元.
+ALTER TABLE `tpms`.`ems_main_engine`
+CHANGE COLUMN `actual_price` `actual_price` VARCHAR(20) NULL DEFAULT NULL COMMENT '实际价格' ,
+CHANGE COLUMN `tax_inclusive_price` `tax_inclusive_price` VARCHAR(20) NULL DEFAULT NULL COMMENT '含税价格';
+
+-- 免3c证明号
+ALTER TABLE `tpms`.`ems_main_engine`
+ADD COLUMN `three_c_code` VARCHAR(50) DEFAULT NULL COMMENT '免3c证明号' AFTER `invoice_no`;
+
+-- 拒绝记录
+ALTER TABLE `tpms`.`ems_main_engine`
+ADD COLUMN `reject_flag` INT(1) NULL DEFAULT '0' COMMENT '拒绝记录' AFTER `remark`;
+
+-- 是否免3c证明号
+ALTER TABLE `tpms`.`ems_main_engine`
+ADD COLUMN `three_c_flag` INT(1) NULL DEFAULT '0' COMMENT '是否免3c' AFTER `invoice_no`;
+
+-- 修改utf8
+-- ALTER TABLE `tpms`.`ems_main_engine`
+-- CHANGE COLUMN `MODEL_NAME` `MODEL_NAME` VARCHAR(100) NOT NULL COMMENT '资产名称' ,
+-- CHANGE COLUMN `invoice_no` `invoice_no` VARCHAR(50) NULL DEFAULT NULL COMMENT '发票号' ,
+-- CHANGE COLUMN `user_name` `user_name` VARCHAR(45) NULL DEFAULT NULL COMMENT '使用者姓名' ,
+-- CHANGE COLUMN `approver_name` `approver_name` VARCHAR(45) NULL DEFAULT NULL COMMENT '审批者姓名' ;
+
+-- 确认查询
+show create table ems_main_engine;
+
+-- 修改至DATE类型
+
+ALTER TABLE `tpms`.`ems_main_engine`
+CHANGE COLUMN `purchase_date` `purchase_date` DATE NULL DEFAULT NULL COMMENT '购买日期' ,
+CHANGE COLUMN `invoice_date` `invoice_date` DATE NULL COMMENT '发票日期' ,
+CHANGE COLUMN `warranty_date` `warranty_date` DATE NULL DEFAULT NULL COMMENT '保修日期' ;
+
