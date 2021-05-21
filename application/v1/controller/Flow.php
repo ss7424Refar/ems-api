@@ -776,7 +776,7 @@ class Flow extends Common {
      * @param fixed_nos 必选 string fixed_nos=[]
      * @return {"status":0,"msg":"[Flow][scrapApply] success","data":[]}
      * @url http://domain/ems-api/v1/Flow/scrapApply
-     * @remark 1.样品管理员(报废申请)->样品审核员; 2.返回状态1代表失败
+     * @remark 1.样品管理员(报废申请)->课长; 2.返回状态1代表失败
      */
     public function scrapApply() {
         try {
@@ -787,6 +787,7 @@ class Flow extends Common {
             // 给subject用
             $user = $userInfo['USER_NAME'];
             $from = $userInfo['MAIL'];
+            $sectionArray = json_decode(SECTION, true);
 
             // 前端需要把数组变成字符串
             $fixed_nos = json_decode($this->request->param('fixed_nos'));// 转为数组
@@ -814,7 +815,7 @@ class Flow extends Common {
                         $tmp['name'] = $query['MODEL_NAME'];
                         $tmp['desc'] = $query['remark'];
 
-                        $inputData[] = $tmp;
+                        $inputData[$query['section_manager']][] = $tmp;
 
                         $this->insertLogRecord([
                             'id'=>null,
@@ -835,16 +836,18 @@ class Flow extends Common {
 
             // 存入邮件队列表中
             if (!empty($inputData)) {
-                $to = $this->getSampleAddress(EMS_AUDITOR);
+                foreach ($inputData as $sec => $value) {
+                    $to = $this->getSectionAddress($sec);
+                    $section = $sectionArray[$userInfo['SECTION']];
+                    $subject = config('mail_header_subject'). MailTemplate::$subjectScrapApply. $section. ' '.$user;
+                    $mainBody = MailTemplate::getScrapApply();
 
-                $subject = config('mail_header_subject'). MailTemplate::$subjectScrapApply.$user;
-                $mainBody = MailTemplate::getScrapApply();
+                    // 插入数据
+                    $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
+                        'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($value)];
 
-                // 插入数据
-                $data = ['id'=>null, 'type'=>FLOW, 'main_body'=>$mainBody, 'subject'=>$subject,
-                    'from'=>$from, 'to'=>json_encode($to), 'table_data' => json_encode($inputData)];
-
-                Db::table('ems_mail_queue')->insert($data);
+                    Db::table('ems_mail_queue')->insert($data);
+                }
 
                 return apiResponse(SUCCESS, '[Flow][scrapApply] success');
             }
@@ -860,16 +863,16 @@ class Flow extends Common {
     /**
      * showdoc
      * @catalog 接口文档/流程相关/审批
-     * @title 样品报废(审核员)
-     * @description 样品报废(审核员)
+     * @title 样品报废(课长)
+     * @description 样品报废(课长)
      * @method get
      * @param fixed_nos 必选 string fixed_nos=[]
      * @param judge 必选 string agree/disagree
-     * @return {"status":0,"msg":"[Flow][replyScrapApplyFromSample] success","data":[]}
-     * @url http://domain/ems-api/v1/Flow/replyScrapApplyFromSample
-     * @remark 1.样品审核员->同意/拒绝; 2.返回状态1代表失败
+     * @return {"status":0,"msg":"[Flow][replyScrapApplyFromSection] success","data":[]}
+     * @url http://domain/ems-api/v1/Flow/replyScrapApplyFromSection
+     * @remark 1.课长->同意/拒绝; 2.返回状态1代表失败
      */
-    public function replyScrapApplyFromSample() {
+    public function replyScrapApplyFromSection() {
         try {
             $userId = $this->loginUser['ems'];
 
@@ -880,7 +883,7 @@ class Flow extends Common {
 
             $inputData = array();
             if ('agree' == $judge) {
-                // 审批员同意
+                // 课长同意
                 for ($i = 0; $i < count($fixed_nos); $i++) {
                     $query = Db::table('ems_main_engine')->where('fixed_no', $fixed_nos[$i])
                         ->where('model_status', SCRAP_REVIEW)->find();
@@ -913,10 +916,10 @@ class Flow extends Common {
                                 'time'=>Db::raw('now()')
                             ]);
                         } else {
-                            Log::record('[Flow][replyScrapApplyFromSample] delete fail ' . $fixed_nos[$i]);
+                            Log::record('[Flow][replyScrapApplyFromSection] delete fail ' . $fixed_nos[$i]);
                         }
                     } else {
-                        Log::record('[Flow][replyScrapApplyFromSample] no data ' . $fixed_nos[$i]);
+                        Log::record('[Flow][replyScrapApplyFromSection] no data ' . $fixed_nos[$i]);
                     }
                 }
                 // 存入邮件队列表中
@@ -930,9 +933,11 @@ class Flow extends Common {
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), // 定时任务判断是数组
                         'table_data' => json_encode($inputData)];
 
-                    Db::table('ems_mail_queue')->insert($data);
+                    $res = Db::table('ems_mail_queue')->insert($data);
 
-                    return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSample] success');
+                    if (1 == $res) {
+                        return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSection] success');
+                    }
                 }
 
             } else {
@@ -971,10 +976,10 @@ class Flow extends Common {
                                 'time'=>Db::raw('now()')
                             ]);
                         } else {
-                            Log::record('[Flow][replyScrapApplyFromSample] update fail ' . $fixed_nos[$i]);
+                            Log::record('[Flow][replyScrapApplyFromSection] update fail ' . $fixed_nos[$i]);
                         }
                     } else {
-                        Log::record('[Flow][replyScrapApplyFromSample] no data ' . $fixed_nos[$i]);
+                        Log::record('[Flow][replyScrapApplyFromSection] no data ' . $fixed_nos[$i]);
                     }
                 }
 
@@ -988,13 +993,17 @@ class Flow extends Common {
                         'from'=>$user['MAIL'], 'to'=>json_encode($to), // 定时任务判断是数组
                         'table_data' => json_encode($inputData)];
 
-                    Db::table('ems_mail_queue')->insert($data);
+                    $res = Db::table('ems_mail_queue')->insert($data);
 
-                    return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSample] success');
+                    if (1 == $res) {
+                        return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSection] success');
+                    }
+
+                    return apiResponse(SUCCESS, '[Flow][replyScrapApplyFromSection] success');
                 }
             }
         } catch (Exception $e) {
-            Log::record('[Flow][replyScrapApplyFromSample] error' . $e->getMessage());
+            Log::record('[Flow][replyScrapApplyFromSection] error' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
         return apiResponse(ERROR, 'server error');

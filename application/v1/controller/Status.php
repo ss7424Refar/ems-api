@@ -88,7 +88,7 @@ class Status extends Common{
      * @param search 必选 string 搜索文本的内容;初始化加载为null
      * @url http://domain/ems-api/v1/Status/getPendingScrap
      * @return {"status":0,"msg":"[Status][getPendingScrap] success","data":{"total":1,"rows":[{"fixed_no":"1806192","MODEL_NAME":"Altair DX10 CS1 1J-1 System","category":null,"SERIAL_NO":"6J170137H","CPU":"i5-8250U","HDD":"SATA 128GB","MEMORY":"8GB","type":"XR83JTG43BBAD11","purchase_date":"2018-06-24 00:00:00","invoice_date":null,"warranty_date":null,"actual_price":null,"tax_inclusive_price":null,"screen_size":"","mac_address":"","cd_rom":"","invoice_no":"iEXPn201806-0018","location":"","department":"DT部","section_manager":"HWD","remark":"手提至新竹Realtek，已由Allion銷毀，不再返回DBH.","model_status":"待报废审批","instore_operator":"q10357th","instore_date":"2018-06-24 14:45:24","scrap_operator":"李欣耘","scrap_date":"2019-11-28 08:59:54","user_id":null,"start_date":null,"predict_date":null,"end_date":null,"approver_id":null,"approve_date":null,"user_name":null,"approver_name":null,"serial_number":"iEXPn201806-0018","supplier":""}]}}
-     * @remark 1. Admin/审批员/样品管理员权限显示所有;
+     * @remark 1. Admin权限显示所有; 2. 样品管理员显示自己申请的机器, 3. 课长显示自己课的机器;
      */
     public function getPendingScrap() {
         try {
@@ -104,14 +104,18 @@ class Status extends Common{
 
             $allData = array();
 
-            if (ADMIN == $userInfo['roleId'] || EMS_AUDITOR == $userInfo['roleId'] || EMS_ADMIN == $userInfo['roleId']) {
+            if (ADMIN == $userInfo['roleId']) {
                 $allData = Db::table('ems_main_engine')->where('model_status', SCRAP_REVIEW)
                     ->order('fixed_no desc')->select();
+            } elseif (EMS_ADMIN == $userInfo['roleId']) {
+                // 只统计自己申请的机子
+                $allData = Db::table('ems_main_engine')->where('model_status', SCRAP_REVIEW)
+                    ->where('scrap_operator', $usr['USER_NAME'])->order('fixed_no desc')->select();
+            } elseif (T_MANAGER == $userInfo['roleId'] || S_MANAGER == $userInfo['roleId'] || ST_MANAGER == $userInfo['roleId']) {
+                // 只统计自己课下的机子
+                $allData = Db::table('ems_main_engine')->where('model_status', SCRAP_REVIEW)
+                    ->where('section_manager', $userInfo['section'])->order('fixed_no desc')->select();
             }
-//            elseif (EMS_ADMIN == $userInfo['roleId']) {
-//                $allData = Db::table('ems_main_engine')->where('scrap_operator', $usr['USER_NAME'])
-//                    ->where('model_status', SCRAP_REVIEW)->order('fixed_no desc')->select();
-//            }
 
             return apiResponse(SUCCESS, '[Status][getPendingScrap] success',
                 $this->getKeywordData($search, $allData, $offset, $pageSize));

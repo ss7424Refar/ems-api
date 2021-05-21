@@ -86,9 +86,23 @@ class Excel extends Common{
                 }
 
             }
+            // 需要替换入库操作者
+            $allUsers = Db::table('ems_user')->distinct(true)
+                ->field('USER_ID, USER_NAME, IS_DELETED')->select();
+            $allKeyUsers = array();
+            foreach ($allUsers as $item) {
+                // 可能出现覆盖的情况，但是入库操作者来说概率挺小的
+                $allKeyUsers[$item['USER_ID']] = $item['USER_NAME'];
+            }
+
             // 生成csv
             foreach ($list as $row) {
                 $row = exportChange($row);
+                // 转换入库操作者ID
+                if (array_key_exists($row['instore_operator'], $allKeyUsers)) {
+                    $row['instore_operator'] = $allKeyUsers[$row['instore_operator']];
+                }
+
                 $item = [];
                 // 替换备注中的回车
                 $row['remark'] = str_replace(PHP_EOL, '\r\n', $row['remark']);

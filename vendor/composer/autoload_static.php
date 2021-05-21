@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
 {
     public static $files = array (
+        '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
         'abede361264e2ae69ec1eee813a101af' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/abs.php',
         '21a5860fbef5be28db5ddfbc3cca67c4' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/acos.php',
         '1546e3f9d127f2a9bb2d1b6c31c26ef1' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/acosh.php',
@@ -86,11 +87,17 @@ class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
+            'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
         'M' => 
         array (
             'Matrix\\' => 7,
+        ),
+        'L' => 
+        array (
+            'Laminas\\ZendFrameworkBridge\\' => 28,
+            'Laminas\\Escaper\\' => 16,
         ),
         'C' => 
         array (
@@ -123,6 +130,10 @@ class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
+        'PhpOffice\\PhpWord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
@@ -130,6 +141,14 @@ class ComposerStaticInit306aa4bc5af52ef7c66317efe392d949
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
+        ),
+        'Laminas\\ZendFrameworkBridge\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
+        ),
+        'Laminas\\Escaper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
         'Complex\\' => 
         array (

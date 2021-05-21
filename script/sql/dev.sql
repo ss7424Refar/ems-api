@@ -122,3 +122,13 @@ CHANGE COLUMN `purchase_date` `purchase_date` DATE NULL DEFAULT NULL COMMENT '�
 CHANGE COLUMN `invoice_date` `invoice_date` DATE NULL COMMENT '发票日期' ,
 CHANGE COLUMN `warranty_date` `warranty_date` DATE NULL DEFAULT NULL COMMENT '保修日期' ;
 
+-- 2021-05-13 移除 ems_btn_assgin
+
+SET SQL_SAFE_UPDATES=0;
+delete from rights where description = 'ems_btn_assign';
+delete from role_rights where right_id = 82
+
+-- 新增课长- 报废审批权限
+insert into role_rights value (6, 88);
+insert into role_rights value (20, 88);
+insert into role_rights value (21, 88);

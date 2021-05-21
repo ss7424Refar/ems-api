@@ -22,7 +22,8 @@
         "phpoffice/phpspreadsheet": "^1.8",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "topthink/think-worker": "1.0"
+        "topthink/think-worker": "1.0",
+        "phpoffice/phpword": "^0.18.1"
     },
     "autoload": {
         "psr-4": {

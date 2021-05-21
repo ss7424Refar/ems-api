@@ -29,7 +29,6 @@ class Permission extends Common {
         /**
          * - 普通用户 {申请} {导出}
          * - 样机管理员 {申请} {导出} {添加} {归还} {报废} {删除} {导入} {编辑}
-         * - 样机审核员 {报废} {删除}
          * - S-Manager {申请} {导出}
          * - T-Manager {申请} {导出}
          * - ST-Manager {申请} {导出}
@@ -122,10 +121,9 @@ class Permission extends Common {
                 /**
                  * - 普通用户 {待归还}
                  * - 样机管理员 {待分配} {待报废审批} {待删除审批}
-                 * - 样机审核员 {待报废审批}
-                 * - S-Manager {待借出审批} {待删除审批}
-                 * - T-Manager {待借出审批} {待删除审批}
-                 * - ST-Manager {待借出审批} {待删除审批}
+                 * - S-Manager {待借出审批} {待删除审批} {待报废审批} {待归还}
+                 * - T-Manager {待借出审批} {待删除审批} {待报废审批} {待归还}
+                 * - ST-Manager {待借出审批} {待删除审批} {待报废审批} {待归还}
                  */
                 // 要获取数目的话, 只能一个个判断
                 if ('ems_nav_assign' == $desc) {
@@ -144,7 +142,7 @@ class Permission extends Common {
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
                             ->where('section_manager', $userInfo['section'])->count();
                     }
-                } elseif ('ems_nav_delete_review' == $desc) {
+                } elseif ('ems_nav_delete_review' == $desc || 'ems_nav_scrap_review' == $desc) {
                     // 如果是Admin 显示所有数据
                     if (ADMIN == $userInfo['roleId']) {
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)->count();
@@ -157,15 +155,6 @@ class Permission extends Common {
                         $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
                             ->where('section_manager', $userInfo['section'])->count();
                     }
-                }  elseif ('ems_nav_scrap_review' == $desc) {
-                    if (ADMIN == $userInfo['roleId'] || EMS_AUDITOR == $userInfo['roleId'] || EMS_ADMIN == $userInfo['roleId']) {
-                        $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)->count();
-                    }
-//                    elseif (EMS_ADMIN == $userInfo['roleId']) {
-//                        // 只统计自己申请的机子
-//                        $tmp['num'] = Db::table('ems_main_engine')->where('model_status', $status)
-//                            ->where('scrap_operator', $usr['USER_NAME'])->count();
-//                    }
                 }
 
                 // 一般不会走到这个分支
@@ -193,6 +182,11 @@ class Permission extends Common {
      * @remark 待删除审批当true时,显示cancel. 待报废审批当true时显示同意/拒绝/取消. 待借出审批没有取消按钮.
      */
     public function showCancel() {
+        /**
+         *  2021-05-13
+         *  待删除/报废审批当true时,显示cancel. false的时候显示同意/拒绝.
+         *  待借出审批没有取消按钮.
+         */
         try {
             $roleId = $this->loginUser['roleId'];
 
@@ -204,6 +198,41 @@ class Permission extends Common {
             return apiResponse(SUCCESS, '[Permission][showCancel] success', $jsonResult);
         } catch (Exception $e) {
             Log::record('[Permission][showCancel] error' . $e->getMessage());
+            return apiResponse(ERROR, 'server error');
+        }
+
+    }
+
+    /**
+     * showdoc
+     * @catalog 接口文档/权限相关
+     * @title 返回各科负责人信息
+     * @description 返回各科负责人信息接口
+     * @method post
+     * @url http://domain/ems-api/v1/Permission/showManager
+     * @return {"status":0,"msg":"[Permission][showManager] success","data":{"CSV(SWT)":[{"name":"何莎","email":"sha.he@dbh.dynabook.com"},{"name":"胡俊鹏","email":"junpeng.hu@dbh.dynabook.com"}],"CUD(DT)":[{"name":"傅凯娜","email":"kaina.fu@dbh.dynabook.com"},{"name":"陈朝红","email":"chaohong.chen@dbh.dynabook.com"},{"name":"李雪","email":"xue.li@dbh.dynabook.com"}],"Design(DBT)":[{"name":"WangAlax","email":"alax.wang@dbt.dynabook.com"}],"FATN(NPI)":[{"name":"黄伟","email":"wei.huang@dbh.dynabook.com"}],"FWD(SWT)":[{"name":"周永前","email":"yongqian.zhou@dbh.dynabook.com"},{"name":"黄丽华","email":"lihua.huang@dbh.dynabook.com"}],"HWD(DT)":[{"name":"刘均凯","email":"junkai.liu@dbh.dynabook.com"},{"name":"吴勇","email":"yong.wu@dbh.dynabook.com"},{"name":"杨志鸿","email":"zhihong.yang@dbh.dynabook.com"}],"HWV(DT)":[{"name":"史洪权","email":"hongquan.shi@dbh.dynabook.com"}],"MED(DT)":[{"name":"余瑞馨","email":"ruixin.yu@dbh.dynabook.com"}],"PSD(SWT)":[{"name":"吴樯","email":"qiang.wu@dbh.dynabook.com"}],"PSO(总经办)":[{"name":"蔡有潮","email":"youchao.cai@dbh.dynabook.com"}],"SCD(SWT)":[{"name":"吴勇明","email":"yongming.wu@dbh.dynabook.com"},{"name":"郭宏记","email":"hongji.guo@dbh.dynabook.com"},{"name":"郭康宁","email":"kangning.guo@dbh.dynabook.com"},{"name":"赵文璇","email":"wenxuan.zhao@dbh.dynabook.com"}],"SSD(SWT)":[{"name":"潘博","email":"Bo.Pan@dbh.dynabook.com"},{"name":"程斌","email":"Bin.cheng@dbh.dynabook.com"}],"SWV(SWT)":[{"name":"严彬","email":"bin.yan@dbh.dynabook.com"},{"name":"王彦","email":"yan1.wang@dbh.dynabook.com"},{"name":"韩光日","email":"guangri.han@dbh.dynabook.com"}],"SYD(DT)":[{"name":"居蓉芳","email":"rongfang.ju@dbh.dynabook.com"},{"name":"董奇","email":"qi.dong@dbh.dynabook.com"},{"name":"李梅","email":"mei1.li@dbh.dynabook.com"}]}}
+     * @return_param
+     * @remark 无
+     */
+    public function showManager() {
+        try {
+
+            $jsonResult = array();
+            // 先查询所有课长
+            $res = Db::table('users')->where('active', 1)
+                ->whereIn('role_id', [T_MANAGER, S_MANAGER, ST_MANAGER])->order('section')->select();
+
+            foreach ($res as $item) {
+                $tmp['name'] = $item['last'].$item['first'];
+                $tmp['email'] = $item['email'];
+
+                $key = $item['section']. '(' .$item['department']. ')';
+                $jsonResult[$key][] = $tmp;
+
+            }
+            return apiResponse(SUCCESS, '[Permission][showManager] success', $jsonResult);
+        } catch (Exception $e) {
+            Log::record('[Permission][showManager] error ' . $e->getMessage());
             return apiResponse(ERROR, 'server error');
         }
 
